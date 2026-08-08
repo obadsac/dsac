@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dharussalam OBA - Member Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        /* Modern UI Elements */
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .hover-lift { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        #page-loader { position: fixed; inset: 0; background: #f8fafc; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-emerald-500 selection:text-white w-full">
+
+    <!-- Preloader -->
+    <div id="page-loader">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-slate-400 font-bold mt-4 tracking-widest text-[10px] uppercase">Loading Dashboard...</p>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/80 z-40 hidden md:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
+
+    <div class="flex h-screen overflow-hidden opacity-0 transition-opacity duration-700 w-full" id="main-content">
+        
+        <!-- Premium Dark Sidebar (Mobile Adaptive) -->
+        <aside id="sidebar" class="w-64 bg-[#0B1120] text-slate-400 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col border-r border-slate-800/50 z-50 shadow-2xl h-full">
+            <div class="h-24 flex flex-col items-center justify-center border-b border-slate-800/50 relative overflow-hidden shrink-0">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2.5 py-0.5 rounded border border-emerald-400/20 shadow-[0_0_10px_rgba(52,211,153,0.2)]">Alumni</span>
+                
+                <!-- Mobile Close Button -->
+                <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
+
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Dharussalam OBA</h1>
+            </div>
+            
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <a href="member-portal.html" class="flex items-center px-4 py-3 bg-emerald-500/10 rounded-xl text-emerald-400 font-bold transition border border-emerald-500/20 shadow-inner">
+                    <i class="fas fa-layer-group w-6"></i> Dashboard
+                </a>
+                <a href="my-profile.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-id-badge w-6 group-hover:text-emerald-400 transition-colors"></i> My Profile
+                </a>
+                <a href="membership-status.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-file-invoice-dollar w-6 group-hover:text-amber-400 transition-colors"></i> Subscription
+                </a>
+                <a href="community-hub.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-globe-asia w-6 group-hover:text-purple-400 transition-colors"></i> Community
+                </a>
+                <a href="donation-history.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-hand-holding-heart w-6 group-hover:text-rose-400 transition-colors"></i> My Donations
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-800/50 shrink-0">
+                <button onclick="logoutUser()" class="w-full flex items-center justify-center px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition font-medium border border-transparent hover:border-rose-500/20">
+                    <i class="fas fa-power-off mr-2"></i> Secure Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            
+            <!-- Glassmorphism Header -->
+            <header class="h-16 md:h-20 glass-panel sticky top-0 flex items-center justify-between px-4 lg:px-10 z-20 shrink-0">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-600 focus:outline-none mr-3 sm:mr-4 hover:text-emerald-600 transition-colors"><i class="fas fa-bars text-xl sm:text-2xl"></i></button>
+                    <div>
+                        <h2 class="text-lg md:text-2xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm truncate max-w-[150px] md:max-w-full">Member Overview</h2>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative cursor-pointer text-slate-400 hover:text-emerald-500 transition mr-2 md:mr-4">
+                        <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-2.5 w-2.5 md:h-3 md:w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 md:h-3 md:w-3 bg-rose-500 border-2 border-white"></span>
+                        </span>
+                    </div>
+
+                    <div class="flex items-center space-x-3 bg-white px-2 py-1.5 rounded-full shadow-sm border border-slate-200 cursor-pointer hover:bg-slate-50 transition shrink-0">
+                        <img id="headerAvatar" src="" alt="Profile" class="h-8 w-8 md:h-9 md:w-9 rounded-full border border-slate-200 bg-slate-100 object-cover">
+                        <div class="hidden md:block pr-3">
+                            <p id="headerUserName" class="text-sm font-bold text-slate-800 leading-none">Loading...</p>
+                            <p id="headerUserId" class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">...</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+                
+                <!-- Background ambient glow -->
+                <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-slate-200/50 to-transparent -z-10 pointer-events-none"></div>
+
+                <div class="max-w-5xl mx-auto pb-10">
+                    
+                    <div class="mb-6 md:mb-8">
+                        <h2 id="welcomeText" class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">Welcome!</h2>
+                        <p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Welcome back to your OBA Member Portal.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mb-8">
+                        
+                        <!-- Digital Membership Card (Mobile Optimized) -->
+                        <div class="lg:col-span-1 bg-slate-900 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden relative text-white border border-slate-800 hover-lift group">
+                            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            <div class="absolute -right-10 -bottom-10 w-40 h-40 md:w-48 md:h-48 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-all pointer-events-none"></div>
+                            
+                            <div class="p-6 md:p-8 relative z-10 h-full flex flex-col justify-between min-h-[220px] md:min-h-0">
+                                <div>
+                                    <div class="flex justify-between items-start mb-5 md:mb-6">
+                                        <div class="flex items-center space-x-2.5 md:space-x-3">
+                                            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-1.5 md:p-2 rounded-lg shadow-sm">
+                                                <i class="fas fa-graduation-cap text-white text-base md:text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="font-extrabold text-xs md:text-sm tracking-widest uppercase text-white leading-none">Dharussalam OBA</h3>
+                                                <p class="text-[8px] md:text-[9px] text-slate-400 font-bold tracking-widest uppercase mt-0.5 md:mt-1">Digital ID</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center space-x-3 md:space-x-4 mb-6 md:mb-8">
+                                        <img src="" id="cardAvatar" class="w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl border-2 border-slate-700 shadow-md bg-slate-800 object-cover shrink-0">
+                                        <div>
+                                            <h2 id="cardName" class="text-base md:text-lg font-extrabold text-white mb-0.5 md:mb-1 tracking-tight leading-snug break-all line-clamp-2">Loading...</h2>
+                                            <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest">Alumni Member</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-slate-950/50 rounded-xl md:rounded-2xl p-3 md:p-4 backdrop-blur-md border border-slate-800 flex justify-between items-center shadow-inner mt-2 md:mt-4">
+                                    <div>
+                                        <p class="text-[8px] md:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5 md:mb-1">Member ID</p>
+                                        <p id="cardId" class="font-mono font-bold text-sm md:text-base text-emerald-400 tracking-wider">N/A</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-[8px] md:text-[9px] text-slate-500 uppercase font-bold tracking-widest mb-0.5 md:mb-1">Batch</p>
+                                        <p id="cardBatch" class="font-bold text-sm md:text-base text-white">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Quick Stats (DYNAMIC DATA) -->
+                        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                            
+                            <!-- Dynamic Events Count -->
+                            <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 flex items-center hover-lift cursor-pointer group" onclick="window.location.href='community-hub.html'">
+                                <div class="h-14 w-14 md:h-16 md:w-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl md:text-2xl mr-4 md:mr-5 group-hover:bg-blue-600 group-hover:text-white transition-colors border border-blue-100 shadow-sm shrink-0">
+                                    <i class="fas fa-ticket-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Events Attended</p>
+                                    <h3 id="statEventsCount" class="text-2xl md:text-3xl font-extrabold text-slate-800">
+                                        <i class="fas fa-circle-notch fa-spin text-sm text-slate-300"></i>
+                                    </h3>
+                                </div>
+                            </div>
+                            
+                            <!-- Dynamic Donations Total -->
+                            <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 flex items-center hover-lift cursor-pointer group" onclick="window.location.href='donation-history.html'">
+                                <div class="h-14 w-14 md:h-16 md:w-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl md:text-2xl mr-4 md:mr-5 group-hover:bg-emerald-600 group-hover:text-white transition-colors border border-emerald-100 shadow-sm shrink-0">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Contributions</p>
+                                    <h3 id="statDonationTotal" class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight break-all">
+                                        <i class="fas fa-circle-notch fa-spin text-sm text-slate-300"></i>
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <!-- Alert Box -->
+                            <div class="sm:col-span-2 bg-amber-50 border border-amber-200 rounded-2xl md:rounded-3xl p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between shadow-sm gap-4 sm:gap-0">
+                                <div class="flex items-start sm:items-center w-full sm:w-auto">
+                                    <div class="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg md:text-xl mr-3 md:mr-5 shadow-inner shrink-0 mt-0.5 sm:mt-0">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-extrabold text-slate-800 text-sm md:text-base">Profile Setup Required</h4>
+                                        <p class="text-[11px] md:text-xs text-slate-600 font-medium mt-0.5 leading-snug">Please update your address and contact details to receive your official Member ID.</p>
+                                    </div>
+                                </div>
+                                <button onclick="window.location.href='my-profile.html'" class="w-full sm:w-auto px-5 py-3 sm:py-2.5 bg-white border border-amber-300 text-amber-700 text-[11px] md:text-xs font-bold uppercase tracking-wider rounded-xl shadow-sm hover:bg-amber-600 hover:text-white hover:border-amber-600 transition-all whitespace-nowrap text-center">
+                                    Update Profile
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Supabase Dynamic Logic Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Mobile Sidebar Toggle Logic
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        const supabaseUrl = 'https://nraqhwfobchmvjnbkhfd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYXFod2ZvYmNobXZqbmJraGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTMyMDgsImV4cCI6MjEwMDg4OTIwOH0.Q_UUnJPg_fvPePFGFc6RWwmf1fFs0J9lYUOlF-WQmfE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 1. Auth Check
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                if (sessionError || !session) { window.location.href = 'index.html'; return; }
+
+                const currentUserId = session.user.id;
+                const metadata = session.user.user_metadata || {};
+                const fullName = metadata.full_name || 'Member';
+                const firstName = fullName.split(' ')[0];
+
+                // 2. Fetch Profile Info
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUserId).single();
+
+                // UI Variables
+                const memberId = metadata.member_id || profile?.member_id || 'Pending ID';
+                const batchYear = metadata.batch_year || profile?.batch_year || 'N/A';
+                const status = profile?.status || 'PENDING';
+                
+                // Update Headers & Greetings
+                document.getElementById('headerUserName').innerText = fullName;
+                document.getElementById('headerUserId').innerText = memberId;
+                document.getElementById('welcomeText').innerText = `Assalamu Alaikum, ${firstName}!`;
+                
+                // Update Digital ID Card
+                document.getElementById('cardName').innerText = fullName;
+                document.getElementById('cardId').innerText = memberId;
+                document.getElementById('cardBatch').innerText = batchYear;
+                
+                // Setup Avatar
+                const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0f172a&color=fff&size=128`;
+                const avatarUrl = profile?.avatar_url ? profile.avatar_url : defaultAvatar;
+                
+                document.getElementById('headerAvatar').src = avatarUrl;
+                document.getElementById('cardAvatar').src = avatarUrl;
+
+                // 3. FETCH DYNAMIC DATA (Events Count)
+                const { count: eventCount } = await supabaseClient
+                    .from('event_rsvps')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', currentUserId);
+                    
+                const evCountEl = document.getElementById('statEventsCount');
+                if(evCountEl) evCountEl.innerHTML = `${eventCount || 0} <span class="text-xs md:text-sm text-slate-400 font-medium">Registered</span>`;
+
+                // 4. FETCH DYNAMIC DATA (Total Donations Approved)
+                const { data: donations } = await supabaseClient
+                    .from('transactions')
+                    .select('amount')
+                    .eq('member_id', currentUserId)
+                    .eq('type', 'donation')
+                    .eq('status', 'approved');
+
+                let totalAmount = 0;
+                if (donations && donations.length > 0) {
+                    totalAmount = donations.reduce((sum, record) => sum + Number(record.amount || 0), 0);
+                }
+                
+                const donTotalEl = document.getElementById('statDonationTotal');
+                if(donTotalEl) donTotalEl.innerHTML = `Rs ${totalAmount.toLocaleString('en-IN')} <span class="text-xs md:text-sm text-slate-400 font-medium">Lifetime</span>`;
+
+                // 5. Show Content
+                document.getElementById('page-loader').style.display = 'none';
+                document.getElementById('main-content').classList.remove('opacity-0');
+
+            } catch (err) {
+                console.error("Dashboard Error:", err);
+                document.getElementById('page-loader').style.display = 'none';
+                document.getElementById('main-content').classList.remove('opacity-0');
+            }
+        });
+
+        async function logoutUser() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

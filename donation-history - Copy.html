@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dharussalam OBA - Fundraising & Donations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .hover-lift { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        #page-loader { position: fixed; inset: 0; background: #f8fafc; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased w-full">
+
+    <div id="page-loader">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-rose-500 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-slate-400 font-bold mt-4 tracking-widest text-[10px] uppercase">Loading Causes...</p>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/80 z-40 hidden md:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
+
+    <div class="flex h-screen overflow-hidden opacity-0 transition-opacity duration-700 w-full" id="main-content">
+        
+        <aside id="sidebar" class="w-64 bg-[#0B1120] text-slate-400 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col border-r border-slate-800/50 z-50 shadow-2xl h-full">
+            <div class="h-24 flex flex-col items-center justify-center border-b border-slate-800/50 relative overflow-hidden shrink-0">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2.5 py-0.5 rounded border border-emerald-400/20">Alumni</span>
+                <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2"></i> Dharussalam OBA</h1>
+            </div>
+            
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <a href="member-portal.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-layer-group w-6 group-hover:text-blue-400 transition-colors"></i> Dashboard
+                </a>
+                <a href="my-profile.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-id-badge w-6 group-hover:text-emerald-400 transition-colors"></i> My Profile
+                </a>
+                <a href="membership-status.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-file-invoice-dollar w-6 group-hover:text-amber-400 transition-colors"></i> Subscription
+                </a>
+                <a href="community-hub.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-globe-asia w-6 group-hover:text-emerald-400 transition-colors"></i> Community
+                </a>
+                <!-- Active Link -->
+                <a href="donation-history.html" class="flex items-center px-4 py-3 bg-rose-500/10 rounded-xl text-rose-400 font-bold transition border border-rose-500/20 shadow-inner">
+                    <i class="fas fa-hand-holding-heart w-6"></i> My Donations
+                </a>
+                <a href="#" id="roleDashboardBtn" class="hidden items-center px-4 py-3 mt-4 border-t border-slate-700/50 hover:bg-slate-800/50 rounded-xl text-slate-300 hover:text-white font-medium transition group">
+                    <i id="roleDashboardIcon" class="fas fa-cogs w-6 group-hover:text-blue-400 transition-colors"></i>
+                    <span id="roleDashboardText">Management Panel</span>
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-800/50 shrink-0">
+                <button onclick="logoutUser()" class="w-full flex items-center justify-center px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition font-medium border border-transparent hover:border-rose-500/20">
+                    <i class="fas fa-power-off mr-2"></i> Secure Logout
+                </button>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            
+            <header class="h-16 md:h-20 glass-panel sticky top-0 flex items-center justify-between px-4 lg:px-10 z-20 shrink-0">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-600 focus:outline-none mr-3 sm:mr-4 hover:text-rose-600 transition-colors"><i class="fas fa-bars text-xl sm:text-2xl"></i></button>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm">Fundraising & Causes</h2>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3 bg-white px-2 py-1.5 rounded-full shadow-sm border border-slate-200 cursor-pointer hover:bg-slate-50 transition">
+                    <img id="headerAvatar" src="" alt="Profile" class="h-8 w-8 rounded-full border border-slate-200 bg-slate-100 object-cover">
+                    <div class="hidden md:block pr-3">
+                        <p id="headerName" class="text-sm font-bold text-slate-800 leading-none">Loading...</p>
+                        <p id="headerId" class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">...</p>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-10 relative">
+                <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-rose-50/50 to-transparent -z-10 pointer-events-none"></div>
+
+                <div class="max-w-6xl mx-auto pb-10">
+                    
+                    <!-- Active Campaigns Section -->
+                    <div class="mb-12">
+                        <h3 class="text-lg md:text-xl font-extrabold text-slate-800 mb-6 flex items-center tracking-tight">
+                            <div class="w-8 h-8 md:w-10 md:h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center mr-3 shrink-0"><i class="fas fa-bullseye"></i></div>
+                            Active Campaigns
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6" id="campaignsContainer">
+                            <!-- Loader -->
+                            <div class="col-span-full text-center py-10 text-slate-400">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-3"></i><p>Loading active causes...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Donation History Section -->
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden mt-10">
+                        <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                            <h3 class="text-lg font-extrabold text-slate-800 flex items-center">
+                                <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mr-3 shrink-0"><i class="fas fa-history"></i></div>
+                                My Contribution History
+                            </h3>
+                        </div>
+                        
+                        <div class="overflow-x-auto w-full">
+                            <table class="w-full text-left border-collapse min-w-[600px]">
+                                <thead class="bg-slate-50/50">
+                                    <tr class="text-slate-400 text-[10px] uppercase tracking-widest border-b border-slate-100">
+                                        <th class="py-4 px-6 font-semibold">Campaign / Cause</th>
+                                        <th class="py-4 px-6 font-semibold">Date</th>
+                                        <th class="py-4 px-6 font-semibold">Amount</th>
+                                        <th class="py-4 px-6 font-semibold">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="donationsTable" class="text-sm">
+                                    <!-- Table Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full'); overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full'); overlay.classList.add('hidden');
+            }
+        }
+
+        const supabaseUrl = 'https://nraqhwfobchmvjnbkhfd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYXFod2ZvYmNobXZqbmJraGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTMyMDgsImV4cCI6MjEwMDg4OTIwOH0.Q_UUnJPg_fvPePFGFc6RWwmf1fFs0J9lYUOlF-WQmfE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let currentUserId = null;
+
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (!session) { window.location.href = 'index.html'; return; }
+            
+            currentUserId = session.user.id;
+            const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUserId).single();
+            
+            const userRole = profile?.role || 'Member'; 
+            const roleBtn = document.getElementById('roleDashboardBtn');
+            const roleText = document.getElementById('roleDashboardText');
+            const roleIcon = document.getElementById('roleDashboardIcon');
+
+            if (userRole === 'Admin') { roleBtn.href = 'admin-panel.html'; roleText.innerText = 'Admin Panel'; roleIcon.className = 'fas fa-user-shield w-6 group-hover:text-blue-400 transition-colors'; roleBtn.classList.replace('hidden', 'flex'); } 
+            else if (userRole === 'Security') { roleBtn.href = 'security-dashboard.html'; roleText.innerText = 'Security Panel'; roleIcon.className = 'fas fa-shield-alt w-6 group-hover:text-rose-400 transition-colors'; roleBtn.classList.replace('hidden', 'flex'); } 
+            else if (userRole === 'Treasurer') { roleBtn.href = 'treasurer-dashboard.html'; roleText.innerText = 'Treasurer Panel'; roleIcon.className = 'fas fa-coins w-6 group-hover:text-amber-400 transition-colors'; roleBtn.classList.replace('hidden', 'flex'); }
+
+            const fullName = profile?.full_name || session.user.user_metadata?.full_name || 'Member';
+            document.getElementById('headerName').innerText = fullName;
+
+            // Database matrum Auth Session irandilaiyum thedi sariyaana ID-ai edukkirom
+            const rawMemberId = profile?.member_id || session.user.user_metadata?.member_id;
+            const validMemberId = (rawMemberId && rawMemberId.toLowerCase() !== 'pending id') ? rawMemberId : 'PENDING ID';
+            document.getElementById('headerId').innerText = validMemberId;
+
+            document.getElementById('headerAvatar').src = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0f172a&color=fff&size=128`;
+            
+            fetchActiveCampaigns();
+            fetchMyDonations();
+            
+            document.getElementById('page-loader').style.display = 'none';
+            document.getElementById('main-content').classList.remove('opacity-0');
+        }
+
+        // 1. Fetch Active Campaigns (Cards)
+        async function fetchActiveCampaigns() {
+            const container = document.getElementById('campaignsContainer');
+            try {
+                const { data, error } = await supabaseClient
+                    .from('fundraising_campaigns')
+                    .select('*')
+                    .eq('status', 'Active')
+                    .order('deadline', { ascending: true });
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    container.innerHTML = data.map(camp => {
+                        const target = Number(camp.target_amount);
+                        const collected = Number(camp.collected_amount);
+                        const progress = Math.min((collected / target) * 100, 100).toFixed(1);
+                        
+                        const deadlineDate = new Date(camp.deadline);
+                        const today = new Date();
+                        const daysLeft = Math.ceil((deadlineDate - today) / (1000 * 60 * 60 * 24));
+                        const daysText = daysLeft > 0 ? `${daysLeft} days left` : 'Ends Today';
+
+                        return `
+                            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover-lift relative overflow-hidden group">
+                                <div>
+                                    <div class="flex justify-between items-start mb-3">
+                                        <h4 class="font-extrabold text-lg text-slate-800 leading-snug pr-2">${camp.title}</h4>
+                                        <span class="bg-rose-50 text-rose-600 px-2 py-1 rounded text-[9px] font-bold uppercase tracking-widest border border-rose-100 shrink-0"><i class="far fa-clock mr-1"></i> ${daysText}</span>
+                                    </div>
+                                    <p class="text-xs text-slate-500 font-medium mb-5 line-clamp-3">${camp.description || 'Support this cause.'}</p>
+                                    
+                                    <div class="mb-5">
+                                        <div class="flex justify-between text-[11px] font-bold mb-1.5">
+                                            <span class="text-emerald-600">Rs. ${collected.toLocaleString()}</span>
+                                            <span class="text-slate-400">Goal: Rs. ${target.toLocaleString()}</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                            <div class="bg-emerald-500 h-2.5 rounded-full transition-all duration-1000" style="width: ${progress}%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="makeDonation('${camp.id}', '${camp.title.replace(/'/g, "\\'")}')" class="w-full py-3 bg-slate-900 text-white rounded-xl text-xs font-extrabold hover:bg-rose-600 transition-colors flex items-center justify-center shadow-md">
+                                    <i class="fas fa-heart mr-2 text-rose-400 group-hover:text-white"></i> Donate Now
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="col-span-full bg-slate-50 rounded-3xl border border-slate-200 p-10 flex flex-col items-center justify-center text-center">
+                            <i class="fas fa-box-open text-4xl text-slate-300 mb-4"></i>
+                            <h4 class="font-extrabold text-slate-700">No Active Campaigns</h4>
+                            <p class="text-xs text-slate-500 mt-1">There are currently no active fundraising campaigns.</p>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = '<p class="text-rose-500 col-span-full text-center">Failed to load campaigns.</p>';
+            }
+        }
+
+        // 2. Fetch User's Donation History (Table)
+        async function fetchMyDonations() {
+            const tbody = document.getElementById('donationsTable');
+            try {
+                const { data, error } = await supabaseClient
+                    .from('campaign_donations')
+                    .select('*, fundraising_campaigns(title)')
+                    .eq('user_id', currentUserId)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(don => {
+                        const dateStr = new Date(don.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                        const isVerified = don.status === 'Verified';
+                        
+                        const statusBadge = isVerified 
+                            ? `<span class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider"><i class="fas fa-check-circle mr-1"></i> Verified</span>`
+                            : `<span class="bg-amber-50 text-amber-600 border border-amber-200 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider"><i class="fas fa-clock mr-1"></i> Pending Review</span>`;
+
+                        return `
+                            <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                                <td class="py-4 px-6 font-bold text-slate-800">${don.fundraising_campaigns?.title || 'Unknown Campaign'}</td>
+                                <td class="py-4 px-6 text-slate-500 text-xs font-medium">${dateStr}</td>
+                                <td class="py-4 px-6 font-extrabold text-emerald-600">Rs. ${Number(don.amount).toLocaleString()}</td>
+                                <td class="py-4 px-6">${statusBadge}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-slate-400 font-medium">You haven't made any donations yet.</td></tr>`;
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        // 3. Donate Function (Popup & Insert)
+        async function makeDonation(campaignId, title) {
+            const { value: formValues } = await Swal.fire({
+                title: 'Make a Contribution',
+                html: `
+                    <div class="text-left mb-2 mt-4">
+                        <p class="text-sm font-bold text-slate-800 mb-4">${title}</p>
+                        
+                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Donation Amount (Rs.) <span class="text-rose-500">*</span></label>
+                        <input type="number" id="swal-amount" class="swal2-input !w-full !m-0 !text-sm !rounded-xl mb-4" placeholder="e.g. 5000" min="1" required>
+                        
+                        <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Transaction Ref / Receipt Link <span class="text-rose-500">*</span></label>
+                        <input type="text" id="swal-receipt" class="swal2-input !w-full !m-0 !text-sm !rounded-xl" placeholder="Bank Reference or Screenshot Link" required>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                confirmButtonText: 'Submit Donation',
+                customClass: { popup: 'rounded-3xl' },
+                preConfirm: () => {
+                    const amount = document.getElementById('swal-amount').value;
+                    const receipt = document.getElementById('swal-receipt').value;
+                    if (!amount || !receipt.trim()) {
+                        Swal.showValidationMessage('Both Amount and Receipt Reference are required.');
+                        return false;
+                    }
+                    return { amount: parseFloat(amount), receipt: receipt.trim() };
+                }
+            });
+
+            if (formValues) {
+                try {
+                    const { error } = await supabaseClient.from('campaign_donations').insert([{
+                        campaign_id: campaignId,
+                        user_id: currentUserId,
+                        amount: formValues.amount,
+                        receipt_url: formValues.receipt,
+                        status: 'Pending'
+                    }]);
+                    
+                    if (error) throw error;
+                    
+                    Swal.fire({
+                        title: 'Thank You!', 
+                        text: 'Your donation has been recorded and is awaiting verification by the Treasurer.', 
+                        icon: 'success', 
+                        confirmButtonColor: '#059669', 
+                        customClass: { popup: 'rounded-3xl' }
+                    });
+                    
+                    fetchMyDonations(); // Refresh the table
+                } catch(err) {
+                    Swal.fire('Error', 'Failed to submit donation.', 'error');
+                }
+            }
+        }
+
+        async function logoutUser() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', checkAuth);
+    </script>
+</body>
+</html>

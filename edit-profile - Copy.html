@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dharussalam OBA - Edit Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .hover-lift { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        #page-loader { position: fixed; inset: 0; background: #f8fafc; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-emerald-500 selection:text-white w-full">
+
+    <!-- Preloader -->
+    <div id="page-loader">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-slate-400 font-bold mt-4 tracking-widest text-[10px] uppercase">Loading Editor...</p>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/80 z-40 hidden md:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
+
+    <div class="flex h-screen overflow-hidden opacity-0 transition-opacity duration-700 w-full" id="main-content">
+        
+        <!-- Premium Dark Sidebar (Mobile Adaptive) -->
+        <aside id="sidebar" class="w-64 bg-[#0B1120] text-slate-400 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col border-r border-slate-800/50 z-50 shadow-2xl h-full">
+            <div class="h-24 flex flex-col items-center justify-center border-b border-slate-800/50 relative overflow-hidden shrink-0">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2.5 py-0.5 rounded border border-emerald-400/20 shadow-[0_0_10px_rgba(52,211,153,0.2)]">Alumni</span>
+                
+                <!-- Mobile Close Button -->
+                <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
+
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Dharussalam OBA</h1>
+            </div>
+            
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <a href="member-portal.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-layer-group w-6 group-hover:text-blue-400 transition-colors"></i> Dashboard
+                </a>
+                <a href="my-profile.html" class="flex items-center px-4 py-3 bg-emerald-500/10 rounded-xl text-emerald-400 font-bold transition border border-emerald-500/20 shadow-inner">
+                    <i class="fas fa-id-badge w-6"></i> My Profile
+                </a>
+                <a href="membership-status.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-file-invoice-dollar w-6 group-hover:text-amber-400 transition-colors"></i> Subscription
+                </a>
+                <a href="community-hub.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-globe-asia w-6 group-hover:text-purple-400 transition-colors"></i> Community
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-800/50 shrink-0">
+                <button onclick="window.location.href='index.html'" class="w-full flex items-center justify-center px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition font-medium border border-transparent hover:border-rose-500/20">
+                    <i class="fas fa-power-off mr-2"></i> Secure Logout
+                </button>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            
+            <!-- Glassmorphism Header -->
+            <header class="h-16 md:h-20 glass-panel sticky top-0 flex items-center justify-between px-4 lg:px-10 z-20 shrink-0">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-600 focus:outline-none mr-3 sm:mr-4 hover:text-emerald-600 transition-colors"><i class="fas fa-bars text-xl sm:text-2xl"></i></button>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm">Profile Editor</h2>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button onclick="window.location.href='my-profile.html'" class="text-[11px] md:text-sm font-bold text-slate-500 hover:text-slate-800 bg-white border border-slate-200 hover:bg-slate-50 px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition-all shadow-sm flex items-center">
+                        <i class="fas fa-arrow-left md:mr-2"></i> <span class="hidden md:inline">Back to Profile</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+                
+                <!-- Background ambient glow -->
+                <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-slate-200/50 to-transparent -z-10 pointer-events-none"></div>
+
+                <div class="max-w-4xl mx-auto space-y-8 pb-10">
+                    
+                    <form id="editProfileForm" onsubmit="handleProfileUpdate(event)" class="bg-white rounded-2xl md:rounded-3xl shadow-lg border border-slate-200 overflow-hidden relative">
+                        <!-- Top Banner -->
+                        <div class="h-24 md:h-32 bg-slate-900 relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
+                        </div>
+
+                        <!-- Form Content -->
+                        <div class="px-5 sm:px-8 pb-6 sm:pb-8 relative">
+                            
+                            <!-- Avatar Upload Section (Mobile Adaptive) -->
+                            <div class="flex flex-col sm:flex-row items-center sm:items-end justify-between -mt-12 sm:-mt-16 mb-6 sm:mb-8 gap-3 sm:gap-4">
+                                <div class="relative group cursor-pointer">
+                                    <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl border-4 border-white shadow-xl bg-white overflow-hidden relative z-10">
+                                        <img id="formAvatar" src="https://ui-avatars.com/api/?name=Loading&background=334155&color=fff&size=256" alt="Profile" class="w-full h-full object-cover">
+                                        <!-- Hover Overlay for Upload -->
+                                        <div class="absolute inset-0 bg-slate-900/60 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <i class="fas fa-camera text-white text-lg sm:text-xl mb-1"></i>
+                                            <span class="text-[9px] sm:text-[10px] text-white font-bold uppercase tracking-widest">Update</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center sm:text-right">
+                                    <p class="text-[11px] sm:text-xs text-slate-500 font-medium"><i class="fas fa-info-circle mr-1"></i> Avatar updates via Supabase Storage coming soon.</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-8 sm:space-y-10">
+                                
+                                <!-- SECTION 1: Personal Identity -->
+                                <div>
+                                    <h3 class="text-base sm:text-lg font-extrabold text-slate-800 border-b border-slate-100 pb-3 mb-4 sm:mb-5 flex items-center">
+                                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-2.5 sm:mr-3 shrink-0"><i class="fas fa-id-card text-sm"></i></div>
+                                        Personal Identity
+                                    </h3>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                                        <div>
+                                            <label class="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 sm:mb-2">Full Legal Name</label>
+                                            <input type="text" id="inpName" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition shadow-inner text-sm font-semibold text-slate-800">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 sm:mb-2">National Identity No. (NIC)</label>
+                                            <input type="text" id="inpNic" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition shadow-inner text-sm font-semibold text-slate-800 uppercase" placeholder="e.g. 1995XXXXX012">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 sm:mb-2">Date of Birth</label>
+                                            <input type="date" id="inpDob" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition shadow-inner text-sm font-semibold text-slate-800">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 sm:mb-2">Blood Group</label>
+                                            <select id="inpBlood" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-rose-500 focus:ring-2 focus:ring-rose-500/20 outline-none transition shadow-inner text-sm font-semibold text-slate-800">
+                                                <option value="" disabled selected>Select Blood Group</option>
+                                                <option value="A+">A+</option><option value="A-">A-</option>
+                                                <option value="B+">B+</option><option value="B-">B-</option>
+                                                <option value="O+">O+</option><option value="O-">O-</option>
+                                                <option value="AB+">AB+</option><option value="AB-">AB-</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECTION 2: Communication Details -->
+                                <div>
+                                    <h3 class="text-base sm:text-lg font-extrabold text-slate-800 border-b border-slate-100 pb-3 mb-4 sm:mb-5 flex items-center">
+                                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mr-2.5 sm:mr-3 shrink-0"><i class="fas fa-map-marker-alt text-sm"></i></div>
+                                        Communication Details
+                                    </h3>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 mb-5 sm:mb-6">
+                                        <div>
+                                            <label class="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 sm:mb-2">Mobile Number (WhatsApp)</label>
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-500"><i class="fab fa-whatsapp"></i></div>
+                                                <input type="tel" id="inpMobile" class="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition shadow-inner text-sm font-semibold text-slate-800" placeholder="+94 77 XXX XXXX">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 sm:mb-2">Email Address</label>
+                                            <input type="email" id="inpEmail" readonly class="w-full p-3 bg-slate-100 border border-slate-200 rounded-xl outline-none text-sm font-semibold text-slate-500 cursor-not-allowed truncate" title="Email cannot be changed here.">
+                                        </div>
+                                    </div>
+
+                                    <!-- Detailed Address Fields -->
+                                    <div class="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200">
+                                        <h4 class="text-[11px] sm:text-xs font-bold text-slate-700 uppercase tracking-widest mb-3 sm:mb-4">Residential Address</h4>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                                            <div class="md:col-span-2">
+                                                <label class="block text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Street / Road Name</label>
+                                                <input type="text" id="inpRoad" class="w-full p-3 bg-white border border-slate-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition shadow-sm text-sm font-semibold text-slate-800" placeholder="e.g. 12/A, School Road">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Area / City</label>
+                                                <input type="text" id="inpArea" class="w-full p-3 bg-white border border-slate-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition shadow-sm text-sm font-semibold text-slate-800" placeholder="e.g. Colombo 07">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">District</label>
+                                                <select id="inpDistrict" class="w-full p-3 bg-white border border-slate-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition shadow-sm text-sm font-semibold text-slate-800">
+                                                    <option value="" disabled selected>Select District</option>
+                                                    <option value="Ampara">Ampara</option><option value="Anuradhapura">Anuradhapura</option><option value="Badulla">Badulla</option>
+                                                    <option value="Batticaloa">Batticaloa</option><option value="Colombo">Colombo</option><option value="Galle">Galle</option>
+                                                    <option value="Gampaha">Gampaha</option><option value="Hambantota">Hambantota</option><option value="Jaffna">Jaffna</option>
+                                                    <option value="Kalutara">Kalutara</option><option value="Kandy">Kandy</option><option value="Kegalle">Kegalle</option>
+                                                    <option value="Kilinochchi">Kilinochchi</option><option value="Kurunegala">Kurunegala</option><option value="Mannar">Mannar</option>
+                                                    <option value="Matale">Matale</option><option value="Matara">Matara</option><option value="Monaragala">Monaragala</option>
+                                                    <option value="Mullaitivu">Mullaitivu</option><option value="Nuwara Eliya">Nuwara Eliya</option><option value="Polonnaruwa">Polonnaruwa</option>
+                                                    <option value="Puttalam">Puttalam</option><option value="Ratnapura">Ratnapura</option><option value="Trincomalee">Trincomalee</option>
+                                                    <option value="Vavuniya">Vavuniya</option>
+                                                </select>
+                                            </div>
+                                            <div class="md:col-span-2">
+                                                <label class="block text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5">Province</label>
+                                                <select id="inpProvince" class="w-full p-3 bg-white border border-slate-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition shadow-sm text-sm font-semibold text-slate-800">
+                                                    <option value="" disabled selected>Select Province</option>
+                                                    <option value="Central">Central Province</option>
+                                                    <option value="Eastern">Eastern Province</option>
+                                                    <option value="North Central">North Central Province</option>
+                                                    <option value="Northern">Northern Province</option>
+                                                    <option value="North Western">North Western Province</option>
+                                                    <option value="Sabaragamuwa">Sabaragamuwa Province</option>
+                                                    <option value="Southern">Southern Province</option>
+                                                    <option value="Uva">Uva Province</option>
+                                                    <option value="Western">Western Province</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SECTION 3: Academic & Professional -->
+                                <div>
+                                    <h3 class="text-base sm:text-lg font-extrabold text-slate-800 border-b border-slate-100 pb-3 mb-4 sm:mb-5 flex items-center">
+                                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mr-2.5 sm:mr-3 shrink-0"><i class="fas fa-briefcase text-sm"></i></div>
+                                        Professional & Academic
+                                    </h3>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6">
+                                        <div>
+                                            <label class="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 sm:mb-2">Current Designation / Job Title</label>
+                                            <input type="text" id="inpJob" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition shadow-inner text-sm font-semibold text-slate-800" placeholder="e.g. Software Engineer">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 sm:mb-2">Highest Qualification</label>
+                                            <input type="text" id="inpEdu" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition shadow-inner text-sm font-semibold text-slate-800" placeholder="e.g. BSc in Computer Science">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Bar (Sticky Bottom / Mobile Adaptive) -->
+                        <div class="bg-slate-50 border-t border-slate-200 p-4 sm:p-6 flex flex-col-reverse sm:flex-row items-center justify-end gap-3 sm:space-x-4 sm:gap-0 mt-6 sm:mt-8 rounded-b-2xl sm:rounded-b-3xl">
+                            <button type="button" onclick="window.location.href='my-profile.html'" class="w-full sm:w-auto px-6 py-3.5 sm:py-3 bg-white border border-slate-300 text-slate-700 text-sm font-bold rounded-xl shadow-sm hover:bg-slate-100 transition">Cancel</button>
+                            <button type="submit" id="btnSave" class="w-full sm:w-auto px-8 py-3.5 sm:py-3 bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-extrabold rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] transition-all flex items-center justify-center hover:-translate-y-0.5">
+                                <i class="fas fa-save mr-2"></i> Save Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Supabase Integration -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Mobile Sidebar Toggle Logic
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        const supabaseUrl = 'https://nraqhwfobchmvjnbkhfd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYXFod2ZvYmNobXZqbmJraGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTMyMDgsImV4cCI6MjEwMDg4OTIwOH0.Q_UUnJPg_fvPePFGFc6RWwmf1fFs0J9lYUOlF-WQmfE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        let currentUserId = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 1. Auth Check
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                if (sessionError || !session) { window.location.href = 'index.html'; return; }
+
+                currentUserId = session.user.id;
+                document.getElementById('inpEmail').value = session.user.email; // Populate immutable email
+
+                // 2. Fetch Existing Profile Data
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUserId).single();
+
+                if(profile) {
+                    // Fallback to metadata if DB is empty
+                    const metadata = session.user.user_metadata || {};
+                    const fullName = profile.full_name || metadata.full_name || '';
+
+                    // Fill Inputs
+                    document.getElementById('inpName').value = fullName;
+                    document.getElementById('inpNic').value = profile.nic || '';
+                    document.getElementById('inpDob').value = profile.dob || '';
+                    if(profile.blood_group) document.getElementById('inpBlood').value = profile.blood_group;
+                    document.getElementById('inpMobile').value = profile.mobile || '';
+                    
+                    // Detailed Address Inputs
+                    document.getElementById('inpRoad').value = profile.address_road || '';
+                    document.getElementById('inpArea').value = profile.address_area || '';
+                    if(profile.address_district) document.getElementById('inpDistrict').value = profile.address_district;
+                    if(profile.address_province) document.getElementById('inpProvince').value = profile.address_province;
+
+                    document.getElementById('inpJob').value = profile.current_job || '';
+                    document.getElementById('inpEdu').value = profile.highest_edu || '';
+
+                    // Set Avatar
+                    const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=334155&color=fff&size=256`;
+                    document.getElementById('formAvatar').src = profile.avatar_url || defaultAvatar;
+                }
+
+                // 3. Reveal UI
+                document.getElementById('page-loader').style.display = 'none';
+                document.getElementById('main-content').classList.remove('opacity-0');
+
+            } catch (err) {
+                console.error("Editor Load Error:", err);
+                Swal.fire('Error', 'Could not load profile data.', 'error');
+            }
+        });
+
+        // 4. Handle Form Submission
+        async function handleProfileUpdate(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSave');
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            try {
+                // Collect Data
+                const updateData = {
+                    full_name: document.getElementById('inpName').value,
+                    nic: document.getElementById('inpNic').value.toUpperCase(),
+                    dob: document.getElementById('inpDob').value,
+                    blood_group: document.getElementById('inpBlood').value,
+                    mobile: document.getElementById('inpMobile').value,
+                    
+                    address_road: document.getElementById('inpRoad').value,
+                    address_area: document.getElementById('inpArea').value,
+                    address_district: document.getElementById('inpDistrict').value,
+                    address_province: document.getElementById('inpProvince').value,
+                    
+                    current_job: document.getElementById('inpJob').value,
+                    highest_edu: document.getElementById('inpEdu').value,
+                    updated_at: new Date().toISOString()
+                };
+
+                // Update Database
+                const { error } = await supabaseClient.from('profiles').update(updateData).eq('id', currentUserId);
+
+                if (error) throw error;
+
+                // Success
+                Swal.fire({
+                    title: 'Profile Saved!',
+                    text: 'Your information has been successfully updated.',
+                    icon: 'success',
+                    confirmButtonColor: '#059669',
+                    customClass: { popup: 'rounded-2xl md:rounded-3xl' }
+                }).then(() => {
+                    window.location.href = 'my-profile.html';
+                });
+
+            } catch (err) {
+                Swal.fire('Update Failed', err.message, 'error');
+                btn.innerHTML = '<i class="fas fa-save mr-2"></i> Save Profile';
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        }
+    </script>
+</body>
+</html>

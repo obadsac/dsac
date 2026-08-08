@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dharussalam OBA - My Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        /* Modern UI Elements */
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .hover-lift { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .modal-scrollbar::-webkit-scrollbar { width: 4px; }
+        .modal-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; }
+
+        /* Loader */
+        #page-loader { position: fixed; inset: 0; background: #f8fafc; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        
+        /* Hide default password eye icon in Edge/IE */
+        input::-ms-reveal, input::-ms-clear { display: none; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-emerald-500 selection:text-white w-full">
+
+    <!-- Preloader -->
+    <div id="page-loader">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-slate-400 font-bold mt-4 tracking-widest text-[10px] uppercase">Loading Profile...</p>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/80 z-40 hidden md:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
+
+    <div class="flex h-screen overflow-hidden opacity-0 transition-opacity duration-700 w-full" id="main-content">
+        
+        <!-- Premium Dark Sidebar (Mobile Adaptive) -->
+        <aside id="sidebar" class="w-64 bg-[#0B1120] text-slate-400 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col border-r border-slate-800/50 z-50 shadow-2xl h-full">
+            <div class="h-24 flex flex-col items-center justify-center border-b border-slate-800/50 relative overflow-hidden shrink-0">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2.5 py-0.5 rounded border border-emerald-400/20 shadow-[0_0_10px_rgba(52,211,153,0.2)]">Alumni</span>
+                
+                <!-- Mobile Close Button -->
+                <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
+
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Dharussalam OBA</h1>
+            </div>
+            
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <a href="member-portal.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-layer-group w-6 group-hover:text-blue-400 transition-colors"></i> Dashboard
+                </a>
+                <a href="my-profile.html" class="flex items-center px-4 py-3 bg-emerald-500/10 rounded-xl text-emerald-400 font-bold transition border border-emerald-500/20 shadow-inner">
+                    <i class="fas fa-id-badge w-6"></i> My Profile
+                </a>
+                <a href="membership-status.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-file-invoice-dollar w-6 group-hover:text-amber-400 transition-colors"></i> Subscription
+                </a>
+                <a href="community-hub.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-globe-asia w-6 group-hover:text-purple-400 transition-colors"></i> Community
+                </a>
+                <a href="donation-history.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-hand-holding-heart w-6 group-hover:text-rose-400 transition-colors"></i> My Donations
+                </a>
+                
+                <div class="pt-6 mt-6 border-t border-slate-800/50">
+                    <p class="px-4 text-[10px] font-bold text-slate-600 uppercase tracking-widest mb-3">Security</p>
+                    <a href="#" onclick="toggleModal('passwordModal'); return false;" class="flex items-center px-4 py-2.5 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                        <i class="fas fa-key w-6 group-hover:text-slate-300 transition-colors"></i> Change Password
+                    </a>
+                </div>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-800/50 shrink-0">
+                <button onclick="logoutUser()" class="w-full flex items-center justify-center px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition font-medium border border-transparent hover:border-rose-500/20">
+                    <i class="fas fa-power-off mr-2"></i> Secure Logout
+                </button>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            
+            <!-- Glassmorphism Header -->
+            <header class="h-16 md:h-20 glass-panel sticky top-0 flex items-center justify-between px-4 lg:px-10 z-20 shrink-0">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-600 focus:outline-none mr-3 sm:mr-4 hover:text-emerald-600 transition-colors"><i class="fas fa-bars text-xl sm:text-2xl"></i></button>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm">Identity & Profile</h2>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3 bg-white px-2 py-1.5 rounded-full shadow-sm border border-slate-200 cursor-pointer hover:bg-slate-50 transition">
+                        <img id="headerAvatar" src="" alt="Profile" class="h-8 w-8 md:h-9 md:w-9 rounded-full border border-slate-200 bg-slate-100 object-cover">
+                        <div class="hidden md:block pr-3">
+                            <p id="headerName" class="text-sm font-bold text-slate-800 leading-none">Loading...</p>
+                            <p id="headerId" class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">...</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+                
+                <!-- Background ambient glow -->
+                <div class="absolute top-0 left-0 w-full h-96 bg-gradient-to-b from-slate-200/50 to-transparent -z-10 pointer-events-none"></div>
+
+                <div class="max-w-5xl mx-auto space-y-6 md:space-y-8 pb-10">
+                    
+                    <!-- Premium Profile Banner (Mobile Adaptive & Fixed Overlap Issue) -->
+                    <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 overflow-hidden relative group">
+                        <!-- Cover Image -->
+                        <div class="h-28 md:h-40 lg:h-52 bg-gradient-to-r from-slate-900 via-emerald-900 to-slate-900 relative overflow-hidden">
+                            <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
+                            <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl"></div>
+                        </div>
+                        
+                        <div class="px-5 md:px-8 pb-6 md:pb-8 relative">
+                            <!-- FIXED: Removed negative margin from the row container so the text stays safely in the white area -->
+                            <div class="flex flex-col md:flex-row items-center md:items-end justify-between mb-4 gap-4 md:gap-4 w-full">
+                                
+                                <div class="flex flex-col md:flex-row items-center md:items-end md:space-x-6 text-center md:text-left w-full md:w-auto">
+                                    <!-- Avatar (Negative margin moved directly here to push ONLY the image up) -->
+                                    <div class="relative w-28 h-28 md:w-36 md:h-36 rounded-2xl border-4 border-white shadow-xl bg-white overflow-hidden group-hover:-translate-y-2 transition-transform duration-500 z-10 shrink-0 -mt-14 md:-mt-20">
+                                        <img id="mainAvatar" src="" alt="Profile Picture" class="w-full h-full object-cover">
+                                        <div class="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-2xl"></div>
+                                    </div>
+                                    
+                                    <!-- Name & Title -->
+                                    <div class="pb-2 mt-3 md:mt-0 relative z-10 w-full">
+                                        <h2 id="cardName" class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight leading-snug">Loading...</h2>
+                                        <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-3 mt-1.5 md:mt-2">
+                                            <span class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-2.5 md:px-3 py-1 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest shadow-sm">
+                                                Batch of <span id="cardBatch">N/A</span>
+                                            </span>
+                                            <span class="text-slate-400 text-xs md:text-sm hidden sm:inline">•</span>
+                                            <span class="text-slate-500 font-medium text-xs md:text-sm flex items-center">
+                                                <i class="fas fa-fingerprint text-slate-400 mr-1.5"></i> <span id="cardMemberId" class="font-mono tracking-wider">Pending ID</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Edit Button -->
+                                <div class="pb-2 flex-shrink-0 z-10 w-full md:w-auto mt-2 md:mt-0">
+                                    <a href="edit-profile.html" class="flex md:inline-flex justify-center items-center w-full md:w-auto px-5 py-3 md:py-2.5 bg-slate-900 text-white rounded-xl shadow-md text-sm font-bold hover:bg-slate-800 hover:-translate-y-0.5 transition-all">
+                                        <i class="fas fa-user-edit mr-2 text-slate-400"></i> Edit Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                        
+                        <!-- Left Column (Personal & Contact) -->
+                        <div class="md:col-span-2 space-y-6 md:space-y-8">
+                            
+                            <!-- Personal Information -->
+                            <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 hover-lift">
+                                <div class="flex items-center mb-5 md:mb-6 border-b border-slate-100 pb-4">
+                                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mr-3 md:mr-4 shrink-0"><i class="fas fa-id-card text-sm md:text-lg"></i></div>
+                                    <h3 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">Personal Identity</h3>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 md:gap-y-6 gap-x-8">
+                                    <div class="group">
+                                        <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 md:mb-1.5 group-hover:text-blue-500 transition-colors">Full Legal Name</p>
+                                        <p id="dispName" class="text-slate-800 font-semibold text-sm md:text-[15px] break-words">-</p>
+                                    </div>
+                                    <div class="group">
+                                        <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 md:mb-1.5 group-hover:text-blue-500 transition-colors">Date of Birth</p>
+                                        <p id="dispDob" class="text-slate-800 font-semibold text-sm md:text-[15px]">-</p>
+                                    </div>
+                                    <div class="group">
+                                        <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 md:mb-1.5 group-hover:text-blue-500 transition-colors">National Identity No.</p>
+                                        <p id="dispNic" class="text-slate-800 font-mono font-semibold tracking-wider text-sm md:text-[15px] break-all">-</p>
+                                    </div>
+                                    <div class="group">
+                                        <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 md:mb-1.5 group-hover:text-rose-500 transition-colors">Blood Group</p>
+                                        <p id="dispBlood" class="text-rose-600 font-black text-base md:text-lg bg-rose-50 border border-rose-100 w-10 h-8 md:w-12 md:h-10 flex items-center justify-center rounded-lg">-</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Details -->
+                            <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 hover-lift">
+                                <div class="flex items-center mb-5 md:mb-6 border-b border-slate-100 pb-4">
+                                    <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mr-3 md:mr-4 shrink-0"><i class="fas fa-address-book text-sm md:text-lg"></i></div>
+                                    <h3 class="text-lg md:text-xl font-bold text-slate-800 tracking-tight">Communication Details</h3>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 md:gap-y-6 gap-x-8">
+                                    <div class="group">
+                                        <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 md:mb-1.5 group-hover:text-emerald-500 transition-colors">Email Address</p>
+                                        <p id="dispEmail" class="text-slate-800 font-semibold text-sm md:text-[15px] break-all">-</p>
+                                    </div>
+                                    <div class="group">
+                                        <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 md:mb-1.5 group-hover:text-emerald-500 transition-colors">Mobile (WhatsApp)</p>
+                                        <p id="dispMobile" class="text-slate-800 font-semibold text-sm md:text-[15px]">-</p>
+                                    </div>
+                                    <div class="sm:col-span-2 group bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                        <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 md:mb-1.5 group-hover:text-emerald-500 transition-colors">Residential Address</p>
+                                        <p id="dispAddress" class="text-slate-800 font-semibold text-sm md:text-[15px] leading-relaxed break-words">-</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column (Academic & Professional) -->
+                        <div class="space-y-6 md:space-y-8">
+                            
+                            <!-- Professional Info -->
+                            <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 relative overflow-hidden group hover-lift">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl group-hover:bg-amber-500/10 transition-all pointer-events-none"></div>
+                                <div class="flex justify-between items-center mb-5 md:mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center mr-2.5 md:mr-3 shrink-0"><i class="fas fa-briefcase text-sm md:text-lg"></i></div>
+                                        <h3 class="text-base md:text-lg font-bold text-slate-800 tracking-tight">Profession</h3>
+                                    </div>
+                                    <button onclick="toggleModal('historyModal')" class="text-amber-600 hover:text-amber-700 bg-white border border-slate-200 hover:border-amber-300 w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center transition shadow-sm shrink-0" title="View Full Timeline">
+                                        <i class="fas fa-history text-[10px] md:text-xs"></i>
+                                    </button>
+                                </div>
+                                
+                                <div>
+                                    <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 md:mb-1.5">Current Designation</p>
+                                    <p id="dispJob" class="text-slate-800 font-bold text-base md:text-lg leading-snug break-words">-</p>
+                                </div>
+                            </div>
+
+                            <!-- Education Info -->
+                            <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 relative overflow-hidden group hover-lift">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl group-hover:bg-purple-500/10 transition-all pointer-events-none"></div>
+                                <div class="flex justify-between items-center mb-5 md:mb-6">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mr-2.5 md:mr-3 shrink-0"><i class="fas fa-user-graduate text-sm md:text-lg"></i></div>
+                                        <h3 class="text-base md:text-lg font-bold text-slate-800 tracking-tight">Academics</h3>
+                                    </div>
+                                    <button onclick="toggleModal('historyModal')" class="text-purple-600 hover:text-purple-700 bg-white border border-slate-200 hover:border-purple-300 w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center transition shadow-sm shrink-0" title="View Full Timeline">
+                                        <i class="fas fa-history text-[10px] md:text-xs"></i>
+                                    </button>
+                                </div>
+                                
+                                <div>
+                                    <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1 md:mb-1.5">Highest Qualification</p>
+                                    <p id="dispEdu" class="text-slate-800 font-bold text-base md:text-lg leading-snug break-words">-</p>
+                                </div>
+                            </div>
+                            
+                            <!-- Additional Module / Action -->
+                            <div class="bg-slate-900 rounded-2xl md:rounded-3xl shadow-lg p-5 md:p-6 relative overflow-hidden text-center border border-slate-700">
+                                <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] pointer-events-none"></div>
+                                <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center mx-auto mb-2.5 md:mb-3 relative z-10 border border-slate-700"><i class="fas fa-id-card-alt text-lg md:text-xl"></i></div>
+                                <h4 class="text-white font-bold text-sm md:text-base mb-1 relative z-10">Digital ID Card</h4>
+                                <p class="text-slate-400 text-[11px] md:text-xs mb-4 relative z-10">View your official OBA card</p>
+                                <button onclick="window.location.href='member-portal.html'" class="w-full bg-white text-slate-900 font-bold py-2.5 md:py-2.5 rounded-xl hover:bg-slate-100 transition relative z-10 shadow-sm text-sm">Open Dashboard</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Timeline & History Modal -->
+    <div id="historyModal" class="fixed inset-0 bg-slate-900/80 z-[100] hidden opacity-0 flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
+        <div id="historyModalContent" class="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95 transition-all duration-300">
+            <div class="p-5 md:p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-2xl md:rounded-t-3xl shrink-0">
+                <h2 class="text-lg md:text-xl font-bold text-slate-800 flex items-center"><i class="fas fa-stream text-emerald-500 mr-2.5 md:mr-3"></i> Profile Timeline</h2>
+                <button onclick="toggleModal('historyModal')" class="text-slate-400 hover:text-rose-500 bg-white border border-slate-200 hover:border-rose-200 w-8 h-8 rounded-full flex items-center justify-center transition shadow-sm focus:outline-none shrink-0">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-5 md:p-8 overflow-y-auto flex-1 modal-scrollbar bg-white rounded-b-2xl md:rounded-b-3xl">
+                <div class="mb-2">
+                    <h3 class="text-[11px] md:text-sm font-bold text-slate-400 uppercase tracking-widest mb-5 md:mb-6 flex items-center">
+                        Professional Experience
+                    </h3>
+                    <div class="relative border-l-2 border-slate-200 ml-3 md:ml-4 space-y-6 md:space-y-8">
+                        <div class="relative pl-6 md:pl-8">
+                            <span class="absolute -left-[11px] top-1 h-4 w-4 md:h-5 md:w-5 rounded-full bg-emerald-500 border-4 border-white shadow"></span>
+                            <div class="bg-slate-50 p-4 md:p-5 rounded-xl md:rounded-2xl border border-slate-100 hover:border-emerald-200 transition group">
+                                <span class="bg-emerald-100 text-emerald-700 border border-emerald-200 text-[8px] md:text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider mb-2 inline-block">Current</span>
+                                <h4 id="timelineJob" class="font-bold text-slate-800 text-base md:text-lg group-hover:text-emerald-600 transition">-</h4>
+                                <p class="text-slate-500 text-xs md:text-sm mt-1">Professional Career</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Change Modal -->
+    <div id="passwordModal" class="fixed inset-0 bg-slate-900/80 z-[100] hidden opacity-0 flex items-center justify-center p-4 backdrop-blur-md transition-all duration-300">
+        <div id="passwordModalContent" class="bg-white rounded-2xl md:rounded-3xl shadow-2xl w-[95%] md:w-full max-w-md flex flex-col transform scale-95 transition-all duration-300 overflow-hidden">
+            <div class="p-5 md:p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+                <h2 class="text-lg md:text-xl font-bold text-slate-800 flex items-center"><i class="fas fa-shield-alt text-blue-500 mr-2.5 md:mr-3"></i> Security Settings</h2>
+                <button onclick="closePasswordModal()" class="text-slate-400 hover:text-rose-500 bg-white border border-slate-200 hover:border-rose-200 w-8 h-8 rounded-full flex items-center justify-center transition shadow-sm focus:outline-none shrink-0">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-5 md:p-8 overflow-y-auto max-h-[80vh] modal-scrollbar">
+                <p class="text-[11px] md:text-xs text-slate-500 mb-5 md:mb-6 font-medium leading-relaxed">Update your account password to maintain security. Please enter your current password to verify your identity.</p>
+                
+                <form id="passwordForm" onsubmit="handlePasswordUpdate(event)">
+                    
+                    <div class="mb-4 md:mb-5">
+                        <label class="block text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 md:mb-2">Current Password</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-blue-500">
+                                <i class="fas fa-lock text-slate-400 text-sm"></i>
+                            </div>
+                            <input type="password" id="oldPassword" required class="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 outline-none transition shadow-inner text-sm font-medium" placeholder="Enter current password">
+                            <button type="button" onclick="togglePasswordVisibility('oldPassword', 'eyeOld')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-blue-500 focus:outline-none transition">
+                                <i id="eyeOld" class="fas fa-eye text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 md:mb-5">
+                        <label class="block text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 md:mb-2">New Password</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-emerald-500">
+                                <i class="fas fa-key text-slate-400 text-sm"></i>
+                            </div>
+                            <input type="password" id="newPassword" required class="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition shadow-inner text-sm font-medium" placeholder="Create new password">
+                            <button type="button" onclick="togglePasswordVisibility('newPassword', 'eyeNew')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-emerald-500 focus:outline-none transition">
+                                <i id="eyeNew" class="fas fa-eye text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 md:mb-8">
+                        <label class="block text-[9px] md:text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1.5 md:mb-2">Confirm Password</label>
+                        <div class="relative group">
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none transition-colors group-focus-within:text-emerald-500">
+                                <i class="fas fa-check-circle text-slate-400 text-sm"></i>
+                            </div>
+                            <input type="password" id="confirmPassword" required class="w-full pl-10 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition shadow-inner text-sm font-medium" placeholder="Confirm new password">
+                            <button type="button" onclick="togglePasswordVisibility('confirmPassword', 'eyeConfirm')" class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-emerald-500 focus:outline-none transition">
+                                <i id="eyeConfirm" class="fas fa-eye text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="pwdMessage" class="hidden p-3 text-xs rounded-xl mb-4 md:mb-5 font-bold flex items-center border">
+                        <i id="pwdMessageIcon" class="mr-2 text-sm shrink-0"></i>
+                        <span id="pwdMessageText" class="leading-snug"></span>
+                    </div>
+
+                    <button type="submit" id="pwdSubmitBtn" class="w-full bg-slate-900 text-white py-3.5 rounded-xl hover:bg-slate-800 transition-all font-bold flex justify-center items-center shadow-lg hover:shadow-xl hover:-translate-y-0.5 text-sm md:text-base">
+                        Update Credentials <i class="fas fa-arrow-right ml-2 text-slate-400 text-xs md:text-sm"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Mobile Sidebar Toggle Logic
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        let currentUserEmail = ''; 
+
+        // Modal Animations
+        function toggleModal(modalID) {
+            const modal = document.getElementById(modalID);
+            const content = modal.querySelector('div');
+            
+            if (modal.classList.contains('hidden')) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    content.classList.remove('scale-95');
+                    content.classList.add('scale-100');
+                }, 10);
+            } else {
+                modal.classList.add('opacity-0');
+                content.classList.remove('scale-100');
+                content.classList.add('scale-95');
+                setTimeout(() => { modal.classList.add('hidden'); }, 300);
+            }
+        }
+
+        function closePasswordModal() {
+            toggleModal('passwordModal');
+            document.getElementById('passwordForm').reset();
+            document.getElementById('pwdMessage').classList.add('hidden');
+            
+            ['oldPassword', 'newPassword', 'confirmPassword'].forEach(id => {
+                document.getElementById(id).type = 'password';
+            });
+            ['eyeOld', 'eyeNew', 'eyeConfirm'].forEach(id => {
+                document.getElementById(id).className = 'fas fa-eye text-slate-400 hover:text-emerald-500 transition text-sm';
+            });
+        }
+
+        function togglePasswordVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        // Supabase Initialization
+        const supabaseUrl = 'https://nraqhwfobchmvjnbkhfd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYXFod2ZvYmNobXZqbmJraGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTMyMDgsImV4cCI6MjEwMDg4OTIwOH0.Q_UUnJPg_fvPePFGFc6RWwmf1fFs0J9lYUOlF-WQmfE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+       document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                if (sessionError || !session) { window.location.href = 'index.html'; return; }
+
+                const user = session.user;
+                currentUserEmail = user.email;
+                const metadata = user.user_metadata || {}; 
+                
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
+
+                const fullName = profile?.full_name || metadata.full_name || 'Member';
+                const memberId = metadata.member_id || profile?.member_id || 'Pending ID';
+                const batchYear = metadata.batch_year || profile?.batch_year || 'N/A';
+                
+                // Avatar Setup
+                const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0f172a&color=fff&size=256`;
+                const avatarUrl = profile?.avatar_url ? profile.avatar_url : defaultAvatar;
+                
+                document.getElementById('headerAvatar').src = avatarUrl;
+                document.getElementById('mainAvatar').src = avatarUrl;
+                
+                document.getElementById('headerName').innerText = fullName;
+                document.getElementById('headerId').innerText = memberId;
+                document.getElementById('cardName').innerText = fullName;
+                document.getElementById('cardMemberId').innerText = memberId;
+                document.getElementById('cardBatch').innerText = batchYear;
+                
+                document.getElementById('dispName').innerText = fullName;
+                document.getElementById('dispDob').innerText = profile?.dob || '-';
+                document.getElementById('dispNic').innerText = profile?.nic || '-';
+                document.getElementById('dispBlood').innerText = profile?.blood_group || '-';
+                document.getElementById('dispEmail').innerText = profile?.email || currentUserEmail;
+                document.getElementById('dispMobile').innerText = profile?.mobile || '-';
+                
+                // Construct detailed address if available
+                let fullAddress = '-';
+                if (profile?.address_road || profile?.address_area || profile?.address_district) {
+                    const parts = [];
+                    if(profile.address_road) parts.push(profile.address_road);
+                    if(profile.address_area) parts.push(profile.address_area);
+                    if(profile.address_district) parts.push(profile.address_district);
+                    if(profile.address_province) parts.push(profile.address_province);
+                    fullAddress = parts.join(', ');
+                } else if (profile?.address) {
+                    fullAddress = profile.address; // Fallback to old single field if exists
+                }
+                document.getElementById('dispAddress').innerText = fullAddress;
+                
+                const job = profile?.current_job || 'Not specified';
+                document.getElementById('dispJob').innerText = job;
+                document.getElementById('timelineJob').innerText = job;
+                document.getElementById('dispEdu').innerText = profile?.highest_edu || '-';
+
+                // Reveal UI
+                document.getElementById('page-loader').style.display = 'none';
+                document.getElementById('main-content').classList.remove('opacity-0');
+
+            } catch(e) {
+                console.error(e);
+                window.location.href = 'index.html';
+            }
+        });
+
+        function showMessage(msg, isError = false) {
+            const box = document.getElementById('pwdMessage');
+            const icon = document.getElementById('pwdMessageIcon');
+            const text = document.getElementById('pwdMessageText');
+            
+            box.className = `p-3 text-xs rounded-xl mb-4 md:mb-5 font-bold flex items-center border ${isError ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}`;
+            icon.className = `mr-2 text-sm shrink-0 fas ${isError ? 'fa-exclamation-triangle' : 'fa-check-circle'}`;
+            text.textContent = msg;
+            box.classList.remove('hidden');
+        }
+
+        async function handlePasswordUpdate(e) {
+            e.preventDefault();
+            
+            const oldPassword = document.getElementById('oldPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const submitBtn = document.getElementById('pwdSubmitBtn');
+            
+            document.getElementById('pwdMessage').classList.add('hidden');
+
+            if (newPassword !== confirmPassword) { showMessage('New passwords do not match!', true); return; }
+            if (newPassword.length < 6) { showMessage('Password should be at least 6 characters.', true); return; }
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Verifying...';
+            submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            try {
+                const { error: signInError } = await supabaseClient.auth.signInWithPassword({ email: currentUserEmail, password: oldPassword });
+
+                if (signInError) {
+                    showMessage('Incorrect current password.', true);
+                    resetBtnState();
+                    return;
+                }
+
+                const { error: updateError } = await supabaseClient.auth.updateUser({ password: newPassword });
+
+                if (updateError) {
+                    showMessage(updateError.message, true);
+                } else {
+                    showMessage('Password updated successfully!', false);
+                    document.getElementById('passwordForm').reset();
+                    setTimeout(() => { closePasswordModal(); }, 2000);
+                }
+            } catch (err) {
+                showMessage('An unexpected error occurred.', true);
+            }
+
+            function resetBtnState() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Update Credentials <i class="fas fa-arrow-right ml-2 text-slate-400 text-xs md:text-sm"></i>';
+                submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+            if(!submitBtn.disabled) resetBtnState();
+        }
+
+        async function logoutUser() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
