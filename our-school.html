@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBA Core - Our Madrasa</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; scroll-behavior: smooth; }
+        
+        .glass-nav { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .hover-lift { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased overflow-x-hidden selection:bg-emerald-500 selection:text-white">
+
+    <!-- Navigation Bar -->
+    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center" data-aos="fade-right">
+                    <a href="index.html" class="text-xl md:text-2xl font-extrabold text-white flex items-center gap-2 group tracking-tight">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-lg shrink-0 border border-white/20 mr-4">
+                            <img src="https://lh3.googleusercontent.com/d/1BjjZtUhH8C1SVd0y-wyeXlta0s-4dBFX" 
+                                alt="Wahatus Salamiyeen Logo" 
+                                class="w-full h-full object-contain p-1.5">
+                        </div>
+                        Wahatus <span class="text-emerald-400 font-light">Salamiyeen</span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8" data-aos="fade-left">
+                    <a href="index.html" class="text-slate-300 hover:text-white font-semibold transition">Home</a>
+                    <a href="our-school.html" class="text-emerald-400 font-bold border-b-2 border-emerald-400 pb-1 transition">Our Madrasa</a>
+                    <a href="leadership.html" class="text-slate-300 hover:text-white font-semibold transition">Leadership</a>
+                    <a href="index.html#news" class="text-slate-300 hover:text-white font-semibold transition">News</a>
+                    <a href="index.html#events" class="text-slate-300 hover:text-white font-semibold transition">Events</a>
+                    <button onclick="window.location.href='index.html'" class="bg-white text-slate-900 px-6 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-300 border border-slate-200">
+                        Access Portal
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-2xl focus:outline-none"><i id="mobile-menu-icon" class="fas fa-bars"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-slate-800 shadow-2xl absolute w-full left-0 transition-all duration-300 z-40">
+            <div class="flex flex-col px-4 pt-4 pb-6 space-y-4">
+                <a href="index.html" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">Home</a>
+                <a href="our-school.html" class="text-emerald-400 font-bold bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">Our Madrasa</a>
+                <a href="leadership.html" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">Leadership</a>
+                <a href="index.html#news" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">News</a>
+                <a href="index.html#events" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">Events</a>
+                <button onclick="window.location.href='index.html'" class="bg-emerald-500 text-white px-6 py-3.5 rounded-xl font-bold w-full shadow-lg">Member Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Premium Dark Hero Section -->
+    <section class="pt-32 pb-24 bg-slate-900 relative overflow-hidden flex items-center min-h-[50vh]">
+        <div class="absolute inset-0 bg-[url('https://lh3.googleusercontent.com/d/1naTirQ1l2Hq9_pcc_6zeUBlmxwuHoM9K')] opacity-30"></div>
+        <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl mix-blend-screen animate-pulse"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl mix-blend-screen animate-pulse" style="animation-delay: 2s;"></div>
+
+        <div class="max-w-7xl mx-auto px-4 text-center relative z-10 w-full">
+            <div data-aos="fade-down" class="mb-6 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/80 border border-slate-700 backdrop-blur-sm">
+                <span class="relative flex h-3 w-3">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                </span>
+                <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Celebrating 25 Years of Excellence</span>
+            </div>
+            
+            <h1 data-aos="zoom-in" data-aos-delay="100" class="text-4xl md:text-5xl lg:text-7xl font-extrabold mb-6 text-white tracking-tight drop-shadow-lg">
+                Dharus Salam <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Arabic College</span>
+            </h1>
+            <p data-aos="fade-up" data-aos-delay="200" class="max-w-2xl mx-auto text-slate-300 leading-relaxed text-lg font-medium">
+                A journey through the glorious history, heritage, and growth of our great institution since 2000. Discover our roots and our vision for the future.
+            </p>
+        </div>
+        
+        <!-- Bottom Curve Divider -->
+        <div class="absolute bottom-0 w-full overflow-hidden leading-[0]">
+            <svg class="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,119.3,195.15,108.6,238.13,101.44,281.33,83.1,321.39,56.44Z" fill="#f8fafc"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Principal's Message Section (SaaS Card Style) -->
+    <section class="py-16 max-w-7xl mx-auto px-4 -mt-16 relative z-20">
+        <div data-aos="fade-up" class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden flex flex-col lg:flex-row hover-lift group">
+            
+            <div class="lg:w-2/5 bg-slate-900 relative h-80 lg:h-auto overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent z-10"></div>
+                <!-- Image Placeholder -->
+                <img src="https://lh3.googleusercontent.com/d/1bE7JY6gR0g12RvvdP6v9AHfJusLobSYF" alt="College Principal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80">
+                
+                <div class="absolute bottom-0 left-0 w-full p-8 z-20">
+                    <h3 class="text-3xl font-extrabold text-white tracking-tight">Ash-Sheik Dr. M.B.M. Ismail.</h3>
+                    <p class="text-emerald-400 font-bold uppercase tracking-widest text-xs mt-1">Madani, Ph.D.</p>
+                </div>
+            </div>
+            
+            <div class="p-8 lg:p-12 lg:w-3/5 flex flex-col justify-center relative">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-2xl"></div>
+                
+                <div class="flex items-center mb-8 relative z-10">
+                    <div class="w-12 h-1.5 bg-emerald-500 rounded-full mr-4"></div>
+                    <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Message from the Principal</h2>
+                </div>
+                
+                <div class="relative z-10">
+                    <i class="fas fa-quote-left text-5xl text-slate-100 absolute -top-4 -left-4 -z-10"></i>
+                    <p class="text-slate-600 mb-6 leading-relaxed text-base md:text-lg font-medium">
+                        "Assalamu Alaikum. It gives me immense pleasure to address our proud alumni. Our college has stood as a beacon of knowledge, shaping the lives of thousands of students over the decades. 
+                        <br><br>
+                        The growth of our institution from a small school to a leading educational hub was made possible not just by our teachers, but by the unwavering support of our Old Boys. Your contributions to infrastructure, scholarships, and moral support have been the backbone of our success. I invite all past pupils to stay connected and continue building our beloved school."
+                    </p>
+                </div>
+                
+                <div class="mt-6 border-t border-slate-100 pt-6 relative z-10">
+                    <p class="font-bold text-slate-800 text-lg tracking-tight">Ash-Sheik Dr. M.B.M. Ismail (Madani)</p>
+                    <p class="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Principal, 2009 - Present</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- History & Evolution Section (Premium Timeline Grid) -->
+    <section class="py-20 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-[10px] font-bold tracking-widest text-blue-600 uppercase bg-blue-50 border border-blue-100 px-4 py-1.5 rounded-full">Legacy & Heritage</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-6 tracking-tight">The Evolution of Our College</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                
+                <!-- Milestone 1 -->
+                <div data-aos="fade-up" data-aos-delay="100" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 relative overflow-hidden group hover-lift">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl group-hover:bg-blue-500/20 transition-all"></div>
+                    <div class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-200 to-slate-300 mb-6 drop-shadow-sm group-hover:from-blue-200 group-hover:to-blue-300 transition-all">2000</div>
+                    <h3 class="text-xl font-extrabold text-slate-800 mb-3 tracking-tight">The Humble Beginning</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed font-medium">
+                        Established on February 1, 2000, at Mancholai Thaqwa Pallivasal with just 19 students, aiming to provide quality Islamic and secular education.
+                    </p>
+                </div>
+                
+                <!-- Milestone 2 -->
+                <div data-aos="fade-up" data-aos-delay="200" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 relative overflow-hidden group hover-lift">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 rounded-full blur-2xl group-hover:bg-emerald-500/20 transition-all"></div>
+                    <div class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-200 to-slate-300 mb-6 drop-shadow-sm group-hover:from-emerald-200 group-hover:to-emerald-300 transition-all">2009</div>
+                    <h3 class="text-xl font-extrabold text-slate-800 mb-3 tracking-tight">A New Chapter</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed font-medium">
+                        The college expanded and relocated to the Semmannodai Kuba Jummah Mosque with 35 incoming students, paving the way for rapid growth.
+                    </p>
+                </div>
+
+                <!-- Milestone 3 -->
+                <div data-aos="fade-up" data-aos-delay="300" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 relative overflow-hidden group hover-lift">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all"></div>
+                    <div class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-200 to-slate-300 mb-6 drop-shadow-sm group-hover:from-amber-200 group-hover:to-amber-300 transition-all">2013</div>
+                    <h3 class="text-xl font-extrabold text-slate-800 mb-3 tracking-tight">Infrastructure Growth</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed font-medium">
+                        A major milestone was reached on November 26, 2013, with the grand opening of the newly constructed three-story college building.
+                    </p>
+                </div>
+
+                <!-- Milestone 4 -->
+                <div data-aos="fade-up" data-aos-delay="400" class="bg-white p-8 rounded-3xl shadow-sm border border-slate-200 relative overflow-hidden group hover-lift">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all"></div>
+                    <div class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-slate-200 to-slate-300 mb-6 drop-shadow-sm group-hover:from-purple-200 group-hover:to-purple-300 transition-all">Now</div>
+                    <h3 class="text-xl font-extrabold text-slate-800 mb-3 tracking-tight">Silver Jubilee</h3>
+                    <p class="text-slate-500 text-sm leading-relaxed font-medium">
+                        Today, celebrating 25 years, the college thrives with 250 students, well-equipped facilities, and diverse educational programs.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Academic Departments & Clubs -->
+    <section class="py-24 bg-white border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <div data-aos="fade-up" data-aos-delay="100" class="p-8 text-center bg-slate-50 rounded-3xl border border-slate-100 hover-lift group">
+                <div class="w-20 h-20 bg-white text-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-8 text-3xl shadow-md border border-slate-200 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
+                    <i class="fas fa-book-quran"></i>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800 mb-3 tracking-tight">Hifz & Academics</h3>
+                <p class="text-slate-500 text-sm leading-relaxed font-medium">Providing robust programs including Hifz, Al-Quran & As-Sunnah Academy, merging traditional and modern education.</p>
+            </div>
+            
+            <div data-aos="fade-up" data-aos-delay="200" class="p-8 text-center bg-slate-50 rounded-3xl border border-slate-100 hover-lift group">
+                <div class="w-20 h-20 bg-white text-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-8 text-3xl shadow-md border border-slate-200 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800 mb-3 tracking-tight">Student Societies</h3>
+                <p class="text-slate-500 text-sm leading-relaxed font-medium">Fostering talent through active student bodies like the Dharus Salam Art Club (Kala Manram) and Youth Forum.</p>
+            </div>
+            
+            <div data-aos="fade-up" data-aos-delay="300" class="p-8 text-center bg-slate-50 rounded-3xl border border-slate-100 hover-lift group">
+                <div class="w-20 h-20 bg-white text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-8 text-3xl shadow-md border border-slate-200 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h3 class="text-xl font-extrabold text-slate-800 mb-3 tracking-tight">Modern Facilities</h3>
+                <p class="text-slate-500 text-sm leading-relaxed font-medium">Equipped with a modern library containing thousands of books and resources in Tamil, English, Arabic, and Sinhala.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#0B1120] text-slate-400 pt-20 pb-10 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div class="lg:col-span-1" data-aos="fade-up" data-aos-delay="100">
+                <h4 class="text-xl font-extrabold mb-4 text-white flex items-center gap-2"><i class="fas fa-shield-alt text-rose-500"></i> OBA Core</h4>
+                <p class="text-xs leading-relaxed mb-6">The enterprise platform connecting past pupils, fostering brotherhood, and managing community operations.</p>
+            </div>
+            
+            <div data-aos="fade-up" data-aos-delay="200">
+                <h4 class="text-sm font-bold mb-4 text-white uppercase tracking-widest">Association</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="our-school.html" class="hover:text-emerald-400 transition-colors text-emerald-400">Our Madrasa</a></li>
+                    <li><a href="leadership.html" class="hover:text-emerald-400 transition-colors">OBA Leadership</a></li>
+                </ul>
+            </div>
+
+            <div data-aos="fade-up" data-aos-delay="300">
+                <h4 class="text-sm font-bold mb-4 text-white uppercase tracking-widest">Portal Access</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><button onclick="window.location.href='index.html'" class="hover:text-emerald-400 transition-colors">Secure Login</button></li>
+                    <li><a href="register.html" class="hover:text-emerald-400 transition-colors">Register Account</a></li>
+                </ul>
+            </div>
+
+            <div data-aos="fade-up" data-aos-delay="400">
+                <h4 class="text-sm font-bold mb-4 text-white uppercase tracking-widest">Support</h4>
+                <ul class="space-y-3 text-sm">
+                    <li class="flex items-center gap-2"><i class="fas fa-envelope text-slate-600"></i> obadsac@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center border-t border-slate-800/50 pt-8">
+             <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">OBA Enterprise Management System v2.0</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({ once: true, offset: 50, duration: 800, easing: 'ease-out-cubic' });
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-menu-icon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.classList.remove('fa-bars'); icon.classList.add('fa-times');
+            } else {
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-times'); icon.classList.add('fa-bars');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wahatus Salamiyeen - Expense Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        #page-loader { position: fixed; inset: 0; background: #f8fafc; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .hover-lift:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-amber-500 selection:text-white w-full">
+
+    <!-- Preloader -->
+    <div id="page-loader">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-slate-400 font-bold mt-4 tracking-widest text-[10px] uppercase">Loading Ledger...</p>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/80 z-40 hidden md:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
+
+    <div class="flex h-screen overflow-hidden opacity-0 transition-opacity duration-700 w-full" id="main-content">
+        
+        <!-- Sidebar (Finance Focused - Mobile Adaptive) -->
+        <aside id="sidebar" class="w-64 bg-[#0B1120] text-slate-400 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col border-r border-slate-800/50 z-50 shadow-2xl h-full">
+            <div class="h-24 flex flex-col items-center justify-center border-b border-slate-800/50 relative overflow-hidden shrink-0">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest text-amber-400 bg-amber-400/10 px-2.5 py-0.5 rounded border border-amber-400/20 shadow-[0_0_10px_rgba(245,158,11,0.2)]">Finance Team</span>
+                
+                <!-- Mobile Close Button -->
+                <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
+
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-shield-alt text-amber-500 mr-2 drop-shadow-md"></i> Wahatus Salamiyeen</h1>
+            </div>
+            
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <a href="treasurer-dashboard.html" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-chart-line w-6 group-hover:text-amber-400 transition-colors"></i> Finance Overview
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-check-double w-6 group-hover:text-emerald-400 transition-colors"></i> Approvals
+                </a>
+                <a href="expense-log.html" class="flex items-center px-4 py-3 bg-amber-500/10 rounded-xl text-amber-400 font-bold transition border border-amber-500/20 shadow-inner">
+                    <i class="fas fa-file-invoice-dollar w-6"></i> Expense Log
+                </a>
+                <a href="#" class="flex items-center px-4 py-3 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition group">
+                    <i class="fas fa-users w-6 group-hover:text-purple-400 transition-colors"></i> Member Directory
+                </a>
+                
+                <a href="event-treasurer.html" class="flex items-center px-4 py-2.5 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition mt-4 border-t border-slate-700/50">
+                    <i class="fas fa-calendar-check w-6 text-purple-500/70"></i> Event Manager
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-slate-800/50 shrink-0">
+                <button onclick="logoutUser()" class="w-full flex items-center justify-center px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition font-medium border border-transparent hover:border-rose-500/20">
+                    <i class="fas fa-power-off mr-2"></i> Secure Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            <!-- Glassmorphism Header -->
+            <header class="h-16 md:h-20 glass-panel sticky top-0 flex items-center justify-between px-4 lg:px-10 z-20 shrink-0">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-600 focus:outline-none mr-3 sm:mr-4 hover:text-amber-600 transition-colors"><i class="fas fa-bars text-xl sm:text-2xl"></i></button>
+                    <div>
+                        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm">Expense Ledger</h2>
+                        <p class="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest truncate">Track & Manage Outflows</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3 bg-white px-2 py-1.5 rounded-full shadow-sm border border-slate-200">
+                        <img id="headerAvatar" src="https://ui-avatars.com/api/?name=Treasurer&background=0f172a&color=fff" class="h-8 w-8 md:h-9 md:w-9 rounded-full border border-slate-200">
+                        <div class="hidden md:block pr-3">
+                            <p id="headerUserName" class="text-sm font-bold text-slate-800 leading-none">Loading...</p>
+                            <p class="text-[9px] text-amber-600 font-bold uppercase tracking-widest mt-0.5">Treasurer</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+                <div class="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-3 gap-6 md:gap-8 pb-10">
+                    
+                    <!-- Expense Entry Form (Left Column / Top on Mobile) -->
+                    <div class="xl:col-span-1 order-1 xl:order-none">
+                        <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-5 md:p-6 sticky top-0 xl:top-6 z-10">
+                            <h3 class="text-base md:text-lg font-bold text-slate-800 mb-5 md:mb-6 flex items-center">
+                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center mr-2.5 md:mr-3 border border-rose-100 shrink-0"><i class="fas fa-file-signature text-sm md:text-base"></i></div>
+                                Record New Expense
+                            </h3>
+                            
+                            <form id="expenseForm" class="space-y-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-[10px] md:text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 md:mb-2">Date</label>
+                                        <input type="date" id="expDate" class="w-full p-2.5 md:p-3 bg-slate-50 border border-slate-200 rounded-lg md:rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition text-sm cursor-pointer shadow-inner" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-[10px] md:text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 md:mb-2">Category</label>
+                                        <select id="expCategory" class="w-full p-2.5 md:p-3 bg-slate-50 border border-slate-200 rounded-lg md:rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition text-sm cursor-pointer shadow-inner" required>
+                                            <option value="" disabled selected>Select...</option>
+                                            <option value="Event Cost">Event Cost</option>
+                                            <option value="Maintenance">Maintenance</option>
+                                            <option value="Printing & Stationery">Printing & Stationery</option>
+                                            <option value="Refreshments">Refreshments</option>
+                                            <option value="Admin & Bank Charges">Admin & Bank Charges</option>
+                                            <option value="Others">Others</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[10px] md:text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 md:mb-2">Payee (Paid To)</label>
+                                    <input type="text" id="expPayee" class="w-full p-2.5 md:p-3 bg-slate-50 border border-slate-200 rounded-lg md:rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition text-sm shadow-inner" placeholder="e.g. ABC Printers" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[10px] md:text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 md:mb-2">Description / Purpose</label>
+                                    <textarea id="expDesc" rows="2" class="w-full p-2.5 md:p-3 bg-slate-50 border border-slate-200 rounded-lg md:rounded-xl focus:ring-2 focus:ring-amber-500 outline-none transition text-sm resize-none shadow-inner" placeholder="Details of the expense..." required></textarea>
+                                </div>
+
+                                <div>
+                                    <label class="block text-[10px] md:text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 md:mb-2">Amount (Rs)</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <span class="text-slate-500 font-bold text-sm md:text-base">Rs</span>
+                                        </div>
+                                        <input type="number" id="expAmount" min="1" class="w-full py-2.5 md:py-3 pr-3 pl-9 md:pl-10 bg-rose-50 border border-rose-200 text-rose-700 font-bold rounded-lg md:rounded-xl focus:ring-2 focus:ring-rose-500 outline-none transition text-sm md:text-base shadow-inner" placeholder="0.00" required>
+                                    </div>
+                                </div>
+
+                                <div class="p-3 md:p-4 bg-slate-50 border border-dashed border-slate-300 rounded-lg md:rounded-xl mt-2 overflow-hidden">
+                                    <label class="block text-[10px] md:text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Upload Voucher / Bill</label>
+                                    <input type="file" id="expVoucher" accept="image/*,.pdf" class="block w-full text-[11px] md:text-sm text-slate-500 file:mr-2 md:file:mr-4 file:py-1.5 md:file:py-2 file:px-3 md:file:px-4 file:rounded-full file:border-0 file:text-[10px] md:file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200 transition cursor-pointer outline-none" required>
+                                    <p class="text-[9px] text-slate-400 mt-2">Required for audit purposes (Max 5MB).</p>
+                                </div>
+
+                                <button type="submit" id="btnSubmitExp" class="w-full bg-slate-900 text-white py-3 md:py-3.5 rounded-xl font-bold shadow-md hover:bg-amber-500 hover:shadow-lg transition-all flex items-center justify-center mt-2 md:mt-4">
+                                    <i class="fas fa-plus-circle mr-2 text-sm"></i> Log Expense
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Expense History Table (Right Column / Bottom on Mobile) -->
+                    <div class="xl:col-span-2 flex flex-col gap-6 order-2 xl:order-none">
+                        
+                        <!-- Quick Stats -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                            <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-5 md:p-6 flex items-center hover-lift">
+                                <div class="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center text-xl md:text-2xl mr-4 md:mr-5 border border-rose-100 shrink-0">
+                                    <i class="fas fa-arrow-trend-down"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Expenses (YTD)</p>
+                                    <h3 id="totalExpenses" class="text-2xl md:text-3xl font-extrabold text-slate-800 break-all"><i class="fas fa-spinner fa-spin text-sm"></i></h3>
+                                </div>
+                            </div>
+                            <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-5 md:p-6 flex items-center hover-lift">
+                                <div class="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-blue-50 text-blue-500 flex items-center justify-center text-xl md:text-2xl mr-4 md:mr-5 border border-blue-100 shrink-0">
+                                    <i class="fas fa-calendar-alt"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">This Month Expenses</p>
+                                    <h3 id="monthlyExpenses" class="text-2xl md:text-3xl font-extrabold text-slate-800 break-all"><i class="fas fa-spinner fa-spin text-sm"></i></h3>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Table (Mobile Adaptive Card View) -->
+                        <div class="bg-transparent md:bg-white md:rounded-3xl md:shadow-sm md:border border-slate-200 overflow-hidden flex-1">
+                            
+                            <div class="px-4 md:px-6 py-4 md:py-5 border-b border-slate-200 md:border-slate-100 flex justify-between items-center bg-white md:bg-slate-50/50 rounded-2xl md:rounded-none shadow-sm md:shadow-none mb-4 md:mb-0">
+                                <h3 class="font-extrabold text-slate-800 text-base md:text-lg flex items-center gap-2">
+                                    <i class="fas fa-list-ul text-amber-500"></i> Recent Expenses
+                                </h3>
+                                <button onclick="fetchExpenses()" class="text-[10px] md:text-xs font-bold text-slate-500 hover:text-slate-800 transition bg-slate-50 md:bg-transparent px-2.5 py-1.5 md:p-0 rounded-lg md:rounded-none border border-slate-200 md:border-0"><i class="fas fa-sync-alt mr-1"></i> Refresh</button>
+                            </div>
+                            
+                            <div class="md:overflow-x-auto md:min-h-[400px]">
+                                <table class="w-full text-left border-collapse block md:table">
+                                    <thead class="hidden md:table-header-group">
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-[10px] uppercase tracking-widest text-slate-500 font-bold">
+                                            <th class="py-4 px-6">Date</th>
+                                            <th class="py-4 px-6">Category & Details</th>
+                                            <th class="py-4 px-6">Payee</th>
+                                            <th class="py-4 px-6 text-right">Amount</th>
+                                            <th class="py-4 px-6 text-center">Voucher</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expenseTableBody" class="block md:table-row-group">
+                                        <tr><td colspan="5" class="py-10 text-center block md:table-cell bg-white rounded-2xl shadow-sm md:shadow-none md:rounded-none md:bg-transparent"><i class="fas fa-circle-notch fa-spin text-amber-500 text-2xl"></i></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Supabase Setup & Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Mobile Sidebar Toggle Logic
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        const supabaseUrl = 'https://nraqhwfobchmvjnbkhfd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYXFod2ZvYmNobXZqbmJraGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTMyMDgsImV4cCI6MjEwMDg4OTIwOH0.Q_UUnJPg_fvPePFGFc6RWwmf1fFs0J9lYUOlF-WQmfE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        let currentUserId = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('expDate').valueAsDate = new Date();
+
+            try {
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                if (sessionError || !session) throw new Error("Not logged in");
+
+                currentUserId = session.user.id;
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUserId).single();
+                
+                if (profile.role !== 'Treasurer' && profile.role !== 'Admin') {
+                    alert("Unauthorized Access.");
+                    window.location.href = 'member-portal.html';
+                    return;
+                }
+
+                document.getElementById('headerUserName').innerText = profile.full_name || 'Treasurer';
+                
+                await fetchExpenses();
+
+                document.getElementById('page-loader').style.display = 'none';
+                document.getElementById('main-content').classList.remove('opacity-0');
+
+            } catch (err) {
+                console.error("Access Error:", err);
+                document.getElementById('page-loader').style.display = 'none';
+                document.getElementById('main-content').classList.remove('opacity-0');
+            }
+        });
+
+        // 1. Fetch Expenses from Database (Mobile Adaptive Card UI)
+        async function fetchExpenses() {
+            const tbody = document.getElementById('expenseTableBody');
+            
+            const { data, error } = await supabaseClient
+                .from('expenses')
+                .select('*')
+                .order('date', { ascending: false });
+
+            let totalExp = 0;
+            let currentMonthExp = 0;
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+
+            if (error || !data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-slate-400 block md:table-cell bg-white rounded-2xl shadow-sm md:shadow-none md:rounded-none md:bg-transparent"><div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fas fa-file-invoice text-2xl text-slate-300"></i></div><p class="text-sm font-bold">No expenses logged yet.</p></td></tr>`;
+                document.getElementById('totalExpenses').innerText = 'Rs 0';
+                document.getElementById('monthlyExpenses').innerText = 'Rs 0';
+                return;
+            }
+
+            tbody.innerHTML = data.map(row => {
+                const dateObj = new Date(row.date);
+                const dateStr = dateObj.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'});
+                
+                const amt = Number(row.amount);
+                totalExp += amt;
+                if (dateObj.getMonth() === currentMonth && dateObj.getFullYear() === currentYear) {
+                    currentMonthExp += amt;
+                }
+                
+                const voucherBtn = row.voucher_url 
+                    ? `<a href="${row.voucher_url}" target="_blank" class="bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white px-3 py-2 md:w-8 md:h-8 md:p-0 rounded-lg flex items-center justify-center mx-auto transition border border-blue-200 hover:border-blue-500 font-bold text-xs md:text-base w-full md:w-auto" title="View Bill"><i class="fas fa-paperclip md:mr-0 mr-1.5"></i> <span class="md:hidden">View Voucher</span></a>`
+                    : `<span class="text-slate-300 block text-center w-full"><i class="fas fa-minus"></i></span>`;
+
+                return `
+                <tr class="block md:table-row bg-white border border-slate-200 md:border-b md:border-slate-50 md:border-t-0 md:border-l-0 md:border-r-0 rounded-2xl md:rounded-none mb-4 md:mb-0 shadow-sm md:shadow-none hover:bg-slate-50/50 transition overflow-hidden">
+                    
+                    <td class="flex justify-between md:table-cell py-3 md:py-4 px-4 md:px-6 text-slate-500 text-xs font-medium border-b border-slate-100 md:border-0 bg-slate-50/50 md:bg-transparent">
+                        <span class="md:hidden font-bold text-slate-400 uppercase tracking-widest text-[10px]">Date</span>
+                        ${dateStr}
+                    </td>
+                    
+                    <td class="block md:table-cell py-3 md:py-4 px-4 md:px-6 border-b border-slate-100 md:border-0">
+                        <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest mb-1.5 inline-block border border-slate-200 shadow-sm">${row.category}</span>
+                        <p class="text-sm text-slate-800 font-medium leading-snug">${row.description}</p>
+                    </td>
+                    
+                    <td class="flex justify-between items-center md:table-cell py-3 md:py-4 px-4 md:px-6 font-bold text-slate-700 text-sm border-b border-slate-100 md:border-0">
+                        <span class="md:hidden text-[10px] text-slate-400 uppercase tracking-widest font-bold">Payee</span>
+                        ${row.payee_name}
+                    </td>
+                    
+                    <td class="flex justify-between items-center md:table-cell py-3 md:py-4 px-4 md:px-6 font-extrabold text-rose-600 md:text-right border-b border-slate-100 md:border-0">
+                        <span class="md:hidden text-[10px] text-slate-400 uppercase tracking-widest font-bold">Amount</span>
+                        Rs ${amt.toLocaleString('en-IN')}
+                    </td>
+                    
+                    <td class="block md:table-cell py-3 md:py-4 px-4 md:px-6 md:text-center bg-slate-50/30 md:bg-transparent">
+                        ${voucherBtn}
+                    </td>
+                    
+                </tr>
+                `;
+            }).join('');
+
+            document.getElementById('totalExpenses').innerText = `Rs ${totalExp.toLocaleString('en-IN')}`;
+            document.getElementById('monthlyExpenses').innerText = `Rs ${currentMonthExp.toLocaleString('en-IN')}`;
+        }
+
+        // 2. Submit New Expense
+        document.getElementById('expenseForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btnSubmitExp');
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin mr-2"></i> Saving...`;
+            btn.disabled = true;
+
+            const date = document.getElementById('expDate').value;
+            const category = document.getElementById('expCategory').value;
+            const payee = document.getElementById('expPayee').value;
+            const desc = document.getElementById('expDesc').value;
+            const amount = document.getElementById('expAmount').value;
+            const file = document.getElementById('expVoucher').files[0];
+
+            try {
+                let receiptUrl = null;
+                
+                if (file) {
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `expense_${Date.now()}.${fileExt}`;
+                    
+                    const { error: uploadError } = await supabaseClient.storage
+                        .from('receipts') 
+                        .upload(fileName, file);
+                        
+                    if (uploadError) throw uploadError;
+
+                    const { data: publicUrlData } = supabaseClient.storage
+                        .from('receipts')
+                        .getPublicUrl(fileName);
+                        
+                    receiptUrl = publicUrlData.publicUrl;
+                }
+
+                const { error: dbError } = await supabaseClient.from('expenses').insert([{
+                    date: date,
+                    category: category,
+                    payee_name: payee,
+                    description: desc,
+                    amount: parseInt(amount),
+                    voucher_url: receiptUrl,
+                    logged_by: currentUserId
+                }]);
+
+                if (dbError) throw dbError;
+
+                Swal.fire({
+                    title: 'Expense Logged!',
+                    text: 'The expense record has been saved successfully.',
+                    icon: 'success',
+                    confirmButtonColor: '#f59e0b',
+                    customClass: { popup: 'rounded-2xl md:rounded-3xl' }
+                });
+
+                document.getElementById('expenseForm').reset();
+                document.getElementById('expDate').valueAsDate = new Date(); 
+                await fetchExpenses();
+
+            } catch (error) {
+                Swal.fire({
+                    title: 'Error', 
+                    text: error.message || 'Make sure the expenses table exists in Supabase.', 
+                    icon: 'error',
+                    customClass: { popup: 'rounded-2xl md:rounded-3xl' }
+                });
+            } finally {
+                btn.innerHTML = `<i class="fas fa-plus-circle mr-2 text-sm"></i> Log Expense`;
+                btn.disabled = false;
+            }
+        });
+
+        async function logoutUser() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

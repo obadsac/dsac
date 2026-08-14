@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dharussalam OBA - Register Account</title>
+    <title>Wahatus Salamiyeen - Register Account</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,19 +49,21 @@
 
             <!-- Header -->
             <div class="relative z-10 flex items-center gap-3">
-                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-2.5 rounded-xl shadow-lg">
-                    <i class="fas fa-graduation-cap text-xl"></i>
+                <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-lg shrink-0 border border-white/20 mr-4">
+                    <img src="https://lh3.googleusercontent.com/d/1BjjZtUhH8C1SVd0y-wyeXlta0s-4dBFX" 
+                            alt="Wahatus Salamiyeen Logo" 
+                            class="w-full h-full object-contain p-1.5">
                 </div>
-                <span class="text-2xl font-extrabold text-white tracking-tight">OBA <span class="text-emerald-400 font-light">Core</span></span>
+                <span class="text-2xl font-extrabold text-white tracking-tight">Wahatus <span class="text-emerald-400 font-light">Salamiyeen</span></span>
             </div>
 
             <!-- Main Copy -->
             <div class="relative z-10 max-w-md mt-10">
                 <h1 class="text-4xl font-extrabold text-white leading-tight mb-6 tracking-tight">
-                    Join the Global Alumni Network.
+                    Join the Wahathus Salamiyeen Network.
                 </h1>
                 <p class="text-slate-400 text-sm leading-relaxed font-medium mb-10">
-                    Create your account to access the official member directory, participate in OBA events, manage your subscription, and give back to our alma mater.
+                    Create your account to access the official member directory, participate in WS events, manage your subscription, and give back to our alma mater.
                 </p>
 
                 <!-- Features List -->
@@ -72,7 +74,7 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-white text-sm">Digital Identity Card</h4>
-                            <p class="text-xs text-slate-500 mt-0.5">Get your official OBA membership card.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Get your official WS membership card.</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4 text-slate-300">
@@ -90,7 +92,7 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-white text-sm">Community Polls</h4>
-                            <p class="text-xs text-slate-500 mt-0.5">Have your say in important OBA decisions.</p>
+                            <p class="text-xs text-slate-500 mt-0.5">Have your say in important WS decisions.</p>
                         </div>
                     </div>
                 </div>
@@ -112,7 +114,7 @@
                     <div class="bg-emerald-500 text-white p-2 rounded-lg shadow-sm shrink-0">
                         <i class="fas fa-graduation-cap text-base"></i>
                     </div>
-                    <span class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">Dharussalam OBA</span>
+                    <span class="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">Wahatus Salamiyeen</span>
                 </div>
 
                 <div class="mb-6 md:mb-8">
@@ -187,7 +189,7 @@
                     </div>
 
                     <p class="text-center text-[10px] md:text-xs text-slate-500 font-medium mt-5 md:mt-6">
-                        By registering, you agree to the OBA <a href="#" class="text-slate-800 font-bold hover:underline">Terms of Service</a> & <a href="#" class="text-slate-800 font-bold hover:underline">Privacy Policy</a>.
+                        By registering, you agree to The Wahatus Salamiyeen <a href="#" class="text-slate-800 font-bold hover:underline">Terms of Service</a> & <a href="#" class="text-slate-800 font-bold hover:underline">Privacy Policy</a>.
                     </p>
 
                 </form>
@@ -195,7 +197,7 @@
                 <div class="mt-6 md:mt-8 text-center border-t border-slate-100 pt-5 md:pt-6">
                     <p class="text-slate-500 text-xs md:text-sm font-medium">
                         Already have an account? 
-                        <a href="index.html" class="text-emerald-600 font-bold hover:text-emerald-700 transition-colors ml-1">Sign in here</a>
+                        <a href="index.html?login=true" class="text-emerald-600 font-bold hover:text-emerald-700 transition-colors ml-1">Sign in here</a>
                     </p>
                 </div>
 
@@ -238,12 +240,20 @@
             box.classList.remove('hidden');
         }
 
-        // Registration Logic
+        // ஒவ்வொரு வார்த்தையின் முதல் எழுத்தையும் Capital ஆக மாற்றும் Function
+        function toTitleCase(str) {
+            if (!str) return '';
+            return str.toLowerCase().split(' ').map(word => {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            }).join(' ');
+        }
+
         // Registration Logic
         async function handleRegistration(e) {
             e.preventDefault();
             
-            const fullName = document.getElementById('fullName').value.trim();
+            let rawName = document.getElementById('fullName').value.trim();
+            const fullName = toTitleCase(rawName); // இது பெயரை சரியான Format-க்கு மாற்றிவிடும்
             const batchYear = document.getElementById('batchYear').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
@@ -286,6 +296,7 @@
                 } else {
                     
                     // 2. NEW FIX: Explicitly update the 'profiles' table with the collected data
+                    // ... existing profile update code ...
                     if (data && data.user) {
                         await supabaseClient.from('profiles').update({
                             full_name: fullName,
@@ -296,15 +307,43 @@
                         }).eq('id', data.user.id);
                     }
 
-                    // Success UI Feedback
+                    // 1. Fetch Secretary's mobile number dynamically from Supabase
+                    let secretaryNumber = "94770000000"; // Fallback number just in case DB query fails
+                    
+                    try {
+                        const { data: secProfile, error: secError } = await supabaseClient
+                            .from('profiles')
+                            .select('mobile')
+                            .eq('role', 'Secretary') // Make sure the role matches exactly in your DB
+                            .single();
+
+                        if (secProfile && secProfile.mobile) {
+                            // Remove any spaces, hyphens, or '+' symbols from the number
+                            secretaryNumber = secProfile.mobile.replace(/[^0-9]/g, '');
+                        }
+                    } catch (fetchErr) {
+                        console.error("Could not fetch secretary number", fetchErr);
+                    }
+
+                    // 2. Success UI Feedback
                     Swal.fire({
                         title: 'Registration Successful!',
-                        html: `Welcome to the network, <b>${fullName}</b>. <br><br><span class="text-[11px] md:text-sm text-slate-500">Your profile has been created. Please log in to complete your setup.</span>`,
+                        html: `Welcome to the network, <b>${fullName}</b>. <br><br><span class="text-[11px] md:text-sm text-slate-500">Send a WhatsApp message to the Secretary and complete your setup.</span>`,
                         icon: 'success',
                         confirmButtonColor: '#059669',
                         customClass: { popup: 'rounded-2xl md:rounded-3xl' }
                     }).then(() => {
-                        window.location.href = 'index.html';
+                        // WhatsApp Message Generation using the dynamic number
+                        const message = `Assalamu Alaikum,\n\nI have registered for the Wahatus Salamiyeen Network.\n\n*Name:* ${fullName}\n*Batch:* ${batchYear}\n\nPlease approve my pending ID.`;
+                        
+                        const encodedMessage = encodeURIComponent(message);
+                        const whatsappUrl = `https://wa.me/${secretaryNumber}?text=${encodedMessage}`;
+
+                        // Open WhatsApp in a new tab
+                        window.open(whatsappUrl, '_blank');
+                        
+                        // Then redirect to index.html
+                        window.location.href = 'index.html?login=true';
                     });
                 }
             } catch (err) {

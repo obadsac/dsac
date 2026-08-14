@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wahatus Salamiyeen - Leadership & Legacy</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- AOS Animation CSS -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; scroll-behavior: smooth; }
+        
+        .glass-nav { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .hover-lift { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; }
+        .hover-lift:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05); }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased overflow-x-hidden selection:bg-emerald-500 selection:text-white">
+
+    <!-- Navigation Bar -->
+    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center" data-aos="fade-right">
+                    <a href="index.html" class="text-xl md:text-2xl font-extrabold text-white flex items-center gap-2 group tracking-tight">
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-lg shrink-0 border border-white/20 mr-4">
+                            <img src="https://lh3.googleusercontent.com/d/1BjjZtUhH8C1SVd0y-wyeXlta0s-4dBFX" 
+                                alt="Wahatus Salamiyeen Logo" 
+                                class="w-full h-full object-contain p-1.5">
+                        </div>
+                        Wahatus <span class="text-emerald-400 font-light">Salamiyeen</span>
+                    </a>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8" data-aos="fade-left">
+                    <a href="index.html" class="text-slate-300 hover:text-white font-semibold transition">Home</a>
+                    <a href="our-school.html" class="text-slate-300 hover:text-white font-semibold transition">Our Madrasa</a>
+                    <a href="leadership.html" class="text-emerald-400 font-bold border-b-2 border-emerald-400 pb-1 transition">Leadership</a>
+                    <a href="index.html#news" class="text-slate-300 hover:text-white font-semibold transition">News</a>
+                    <a href="index.html#events" class="text-slate-300 hover:text-white font-semibold transition">Events</a>
+                    <button onclick="window.location.href='index.html'" class="bg-white text-slate-900 px-6 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-300 border border-slate-200">
+                        Access Portal
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white text-2xl focus:outline-none"><i id="mobile-menu-icon" class="fas fa-bars"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-slate-800 shadow-2xl absolute w-full left-0 transition-all duration-300 z-40">
+            <div class="flex flex-col px-4 pt-4 pb-6 space-y-4">
+                <a href="index.html" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">Home</a>
+                <a href="our-school.html" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">Our Madrasa</a>
+                <a href="leadership.html" class="text-emerald-400 font-bold bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">Leadership</a>
+                <a href="index.html#news" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">News</a>
+                <a href="index.html#events" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">Events</a>
+                <button onclick="window.location.href='index.html'" class="bg-emerald-500 text-white px-6 py-3.5 rounded-xl font-bold w-full shadow-lg">Member Login</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Premium Dark Hero Section -->
+    <section class="pt-32 pb-24 bg-slate-900 relative overflow-hidden flex items-center min-h-[50vh]">
+        <div class="absolute inset-0 bg-[url('https://lh3.googleusercontent.com/d/1naTirQ1l2Hq9_pcc_6zeUBlmxwuHoM9K')] opacity-30"></div>
+        <div class="absolute top-0 right-0 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl mix-blend-screen animate-pulse"></div>
+
+        <div class="max-w-7xl mx-auto px-4 text-center relative z-10 w-full">
+            <h1 data-aos="zoom-in" class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 text-white tracking-tight drop-shadow-lg">
+                Leadership & <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Legacy</span>
+            </h1>
+            <p data-aos="fade-up" data-aos-delay="200" class="max-w-2xl mx-auto text-slate-300 leading-relaxed text-lg font-medium">
+                Guided by visionaries, driven by dedication. Meet the executive committee steering our association and explore the rich history of our achievements.
+            </p>
+        </div>
+        
+        <!-- Bottom Curve Divider -->
+        <div class="absolute bottom-0 w-full overflow-hidden leading-[0]">
+            <svg class="relative block w-[calc(100%+1.3px)] h-[50px] md:h-[100px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,119.3,195.15,108.6,238.13,101.44,281.33,83.1,321.39,56.44Z" fill="#f8fafc"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- The Principal's Desk -->
+    <section class="py-16 max-w-6xl mx-auto px-4 -mt-12 relative z-20">
+        <div class="text-center mb-12" data-aos="fade-up">
+            <span class="text-[10px] font-bold tracking-widest text-emerald-600 uppercase bg-emerald-50 border border-emerald-100 px-4 py-1.5 rounded-full shadow-sm">Patron of the Association</span>
+        </div>
+
+        <div data-aos="fade-up" data-aos-delay="100" class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden max-w-4xl mx-auto flex flex-col md:flex-row hover-lift group">
+            <div class="md:w-2/5 bg-slate-100 relative h-72 md:h-auto overflow-hidden">
+                <div class="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors z-10"></div>
+                <img src="https://lh3.googleusercontent.com/d/1bE7JY6gR0g12RvvdP6v9AHfJusLobSYF" alt="College Principal" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80">
+            </div>
+            <div class="p-8 md:p-10 md:w-3/5 flex flex-col justify-center relative">
+                <i class="fas fa-quote-left text-5xl text-slate-100 absolute top-6 right-8"></i>
+                <p class="text-slate-600 font-medium italic mb-6 leading-relaxed relative z-10">
+                    "The Old Boys Association is the backbone of our institution's development. Their unwavering support, both morally and financially, continues to elevate our school to greater heights. I urge every past pupil to join hands with the OBA to build a brighter future for our current students."
+                </p>
+                <div class="border-t border-slate-100 pt-4 mt-auto">
+                    <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">Ash-Sheik Dr. M.B.M. Ismail.<span class="text-xs font-bold text-slate-400 tracking-widest"> (Madani), Ph.D.</span></h3>
+                    <p class="text-emerald-600 font-bold text-sm mt-1">Principal of Dharus Salam Arabic College</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Current Executive Committee (DYNAMIC SUPABASE FETCHING) -->
+    <section class="py-20 bg-slate-50 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-[10px] font-bold tracking-widest text-blue-600 uppercase bg-blue-50 border border-blue-100 px-4 py-1.5 rounded-full">Term 2025 - 2027</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-6 tracking-tight">Executive Committee</h2>
+            </div>
+
+            <!-- Dynamic Committee Container -->
+            <div id="committeeContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Loader will show here initially -->
+                <div class="col-span-full text-center py-10">
+                    <i class="fas fa-circle-notch fa-spin text-emerald-500 text-3xl"></i>
+                    <p class="text-slate-500 font-medium mt-4">Loading Executive Members...</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12" data-aos="fade-up" data-aos-delay="400">
+                <button class="bg-white border border-slate-200 text-slate-700 px-8 py-3 rounded-xl font-bold hover:bg-slate-50 hover:border-slate-300 transition shadow-sm">
+                    View Full Committee List
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Past Administrations (Modern Timeline) -->
+    <section class="py-24 bg-white border-t border-slate-200">
+        <div class="max-w-4xl mx-auto px-4">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-[10px] font-bold tracking-widest text-slate-500 uppercase bg-slate-100 border border-slate-200 px-4 py-1.5 rounded-full shadow-sm">Honoring Our Legacy</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mt-6 tracking-tight">Past Administrations & Milestones</h2>
+            </div>
+
+            <!-- The Feed (Timeline) style from Community Hub -->
+            <div class="space-y-2 relative before:absolute before:inset-0 before:ml-6 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-1 before:bg-slate-200">
+                
+                <!-- Timeline Item 1 -->
+                <div data-aos="fade-up" class="timeline-item relative flex items-start md:items-center justify-between md:justify-normal md:odd:flex-row-reverse group mb-12">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-2xl border-4 border-slate-50 bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-lg shrink-0 md:order-1 z-10 relative md:mx-auto md:left-0 left-[-24px] group-hover:scale-110 transition-transform">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    
+                    <div class="w-[calc(100%-1rem)] md:w-[calc(50%-3rem)] p-7 rounded-3xl border border-slate-200 bg-white shadow-sm hover-lift relative overflow-hidden group-hover:border-slate-300 transition-colors">
+                        <span class="text-[9px] font-bold uppercase tracking-widest bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full mb-3 inline-block shadow-sm">Term: 2022 - 2024</span>
+                        <h3 class="font-extrabold text-slate-800 text-xl mb-1 tracking-tight">Led by: Dr. M.R. Kabeer</h3>
+                        <div class="w-10 h-1 bg-emerald-500 rounded mb-4"></div>
+                        
+                        <p class="font-bold text-slate-700 mb-2 text-sm">Key Achievements:</p>
+                        <ul class="list-none space-y-2 text-slate-500 text-sm font-medium leading-relaxed">
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-500 mt-1 mr-2 shrink-0"></i> Successfully completed the construction of the New IT Laboratory (Cost: Rs 5.2M).</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-500 mt-1 mr-2 shrink-0"></i> Introduced the 'Annual OBA Scholarship Fund' assisting 50 students.</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-500 mt-1 mr-2 shrink-0"></i> Hosted the Grand Centenary Alumni Meet in Colombo.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Timeline Item 2 -->
+                <div data-aos="fade-up" class="timeline-item relative flex items-start md:items-center justify-between md:justify-normal md:odd:flex-row-reverse group mb-12">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-2xl border-4 border-slate-50 bg-slate-400 text-white shadow-lg shrink-0 md:order-1 z-10 relative md:mx-auto md:left-0 left-[-24px] group-hover:scale-110 transition-transform">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    
+                    <div class="w-[calc(100%-1rem)] md:w-[calc(50%-3rem)] p-7 rounded-3xl border border-slate-200 bg-white shadow-sm hover-lift relative overflow-hidden group-hover:border-slate-300 transition-colors">
+                        <span class="text-[9px] font-bold uppercase tracking-widest bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full mb-3 inline-block shadow-sm">Term: 2019 - 2021</span>
+                        <h3 class="font-extrabold text-slate-800 text-xl mb-1 tracking-tight">Led by: Eng. A.L.M. Naleef</h3>
+                        <div class="w-10 h-1 bg-slate-400 rounded mb-4"></div>
+                        
+                        <p class="font-bold text-slate-700 mb-2 text-sm">Key Achievements:</p>
+                        <ul class="list-none space-y-2 text-slate-500 text-sm font-medium leading-relaxed">
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-500 mt-1 mr-2 shrink-0"></i> Spearheaded the COVID-19 Relief Fund, providing dry rations to 500+ families.</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-500 mt-1 mr-2 shrink-0"></i> Renovated the School Main Pavilion and Sports Complex.</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-500 mt-1 mr-2 shrink-0"></i> Launched the first digital OBA member database.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Timeline Item 3 -->
+                <div data-aos="fade-up" class="timeline-item relative flex items-start md:items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                    <div class="flex items-center justify-center w-12 h-12 rounded-2xl border-4 border-slate-50 bg-slate-400 text-white shadow-lg shrink-0 md:order-1 z-10 relative md:mx-auto md:left-0 left-[-24px] group-hover:scale-110 transition-transform">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    
+                    <div class="w-[calc(100%-1rem)] md:w-[calc(50%-3rem)] p-7 rounded-3xl border border-slate-200 bg-white shadow-sm hover-lift relative overflow-hidden group-hover:border-slate-300 transition-colors">
+                        <span class="text-[9px] font-bold uppercase tracking-widest bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1 rounded-full mb-3 inline-block shadow-sm">Term: 2016 - 2018</span>
+                        <h3 class="font-extrabold text-slate-800 text-xl mb-1 tracking-tight">Led by: Mr. S.H. Rila</h3>
+                        <div class="w-10 h-1 bg-slate-400 rounded mb-4"></div>
+                        
+                        <p class="font-bold text-slate-700 mb-2 text-sm">Key Achievements:</p>
+                        <ul class="list-none space-y-2 text-slate-500 text-sm font-medium leading-relaxed">
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-500 mt-1 mr-2 shrink-0"></i> Donated a 54-seater School Bus for student transportation.</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-500 mt-1 mr-2 shrink-0"></i> Organized the first inter-school OBA cricket tournament.</li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#0B1120] text-slate-400 pt-20 pb-10 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div class="lg:col-span-1" data-aos="fade-up" data-aos-delay="100">
+                <h4 class="text-xl font-extrabold mb-4 text-white flex items-center gap-2"><i class="fas fa-shield-alt text-rose-500"></i> Wahatus Salamiyeen</h4>
+                <p class="text-xs leading-relaxed mb-6">The enterprise platform connecting past pupils, fostering brotherhood, and managing community operations.</p>
+            </div>
+            
+            <div data-aos="fade-up" data-aos-delay="200">
+                <h4 class="text-sm font-bold mb-4 text-white uppercase tracking-widest">Association</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><a href="our-school.html" class="hover:text-emerald-400 transition-colors">Our Madrasa</a></li>
+                    <li><a href="leadership.html" class="hover:text-emerald-400 transition-colors text-emerald-400">OBA Leadership</a></li>
+                </ul>
+            </div>
+
+            <div data-aos="fade-up" data-aos-delay="300">
+                <h4 class="text-sm font-bold mb-4 text-white uppercase tracking-widest">Portal Access</h4>
+                <ul class="space-y-3 text-sm">
+                    <li><button onclick="window.location.href='index.html'" class="hover:text-emerald-400 transition-colors">Secure Login</button></li>
+                    <li><a href="register.html" class="hover:text-emerald-400 transition-colors">Register Account</a></li>
+                </ul>
+            </div>
+
+            <div data-aos="fade-up" data-aos-delay="400">
+                <h4 class="text-sm font-bold mb-4 text-white uppercase tracking-widest">Support</h4>
+                <ul class="space-y-3 text-sm">
+                    <li class="flex items-center gap-2"><i class="fas fa-envelope text-slate-600"></i> obadsac@gmail.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center border-t border-slate-800/50 pt-8">
+             <p class="text-[10px] font-bold text-slate-600 uppercase tracking-widest">OBA Enterprise Management System v2.0</p>
+        </div>
+    </footer>
+
+    <!-- Supabase Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        AOS.init({ once: true, offset: 50, duration: 800, easing: 'ease-out-cubic' });
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = document.getElementById('mobile-menu-icon');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                icon.classList.remove('fa-bars'); icon.classList.add('fa-times');
+            } else {
+                menu.classList.add('hidden');
+                icon.classList.remove('fa-times'); icon.classList.add('fa-bars');
+            }
+        }
+
+        // --- SUPABASE DATA FETCHING ---
+        const supabaseUrl = 'https://nraqhwfobchmvjnbkhfd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYXFod2ZvYmNobXZqbmJraGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTMyMDgsImV4cCI6MjEwMDg4OTIwOH0.Q_UUnJPg_fvPePFGFc6RWwmf1fFs0J9lYUOlF-WQmfE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function fetchCommittee() {
+            const container = document.getElementById('committeeContainer');
+            
+            try {
+                // Fetch profiles with management roles
+                const { data: profiles, error } = await supabaseClient
+                    .from('profiles')
+                    .select('full_name, role, mobile, avatar_url')
+                    .in('role', ['Admin', 'Secretary', 'Treasurer']);
+
+                if (error) throw error;
+
+                if (profiles && profiles.length > 0) {
+                    
+                    // Design mappings to ensure Tailwind picks up classes directly
+                    const roleConfig = {
+                        'Admin': {
+                            title: 'OBA President',
+                            glowClass: 'bg-emerald-500/10 group-hover:bg-emerald-500/20',
+                            textClass: 'text-emerald-600',
+                            bgClass: 'bg-emerald-50 border-emerald-100',
+                            message: 'Assalamu Alaikum Warahmathullahi Wabarakatuhu. As the leader of the OBA, I would like to discuss a matter with you.'
+                        },
+                        'Secretary': {
+                            title: 'General Secretary',
+                            glowClass: 'bg-blue-500/10 group-hover:bg-blue-500/20',
+                            textClass: 'text-blue-600',
+                            bgClass: 'bg-blue-50 border-blue-100',
+                            message: 'Assalamu Alaikum Warahmathullahi Wabarakatuhu. As the Secretary of the OBA, I need some help regarding my membership / upcoming events.'
+                        },
+                        'Treasurer': {
+                            title: 'Treasurer',
+                            glowClass: 'bg-amber-500/10 group-hover:bg-amber-500/20',
+                            textClass: 'text-amber-600',
+                            bgClass: 'bg-amber-50 border-amber-100',
+                            message: 'Assalamu Alaikum Warahmathullahi Wabarakatuhu. As the Treasurer of the OBA, I have a query regarding my subscription fee / donations.'
+                        }
+                    };
+
+                    // Sort so Admin comes first, then Secretary, then Treasurer
+                    const sortOrder = { 'Admin': 1, 'Secretary': 2, 'Treasurer': 3 };
+                    profiles.sort((a, b) => sortOrder[a.role] - sortOrder[b.role]);
+
+                    container.innerHTML = profiles.map((p, index) => {
+                        const config = roleConfig[p.role];
+                        const delay = (index + 1) * 100;
+                        
+                        // Clean mobile number for WhatsApp link
+                        const rawMobile = p.mobile ? p.mobile.replace(/[^0-9]/g, '') : '';
+                        const mobile = rawMobile.startsWith('0') ? '94' + rawMobile.substring(1) : rawMobile;
+                        
+                        const waLink = mobile ? `https://wa.me/${mobile}?text=${encodeURIComponent(config.message)}` : '#';
+                        const waBtnClass = mobile ? 'bg-[#25D366] hover:bg-[#1da851] hover:shadow-lg' : 'bg-slate-300 cursor-not-allowed';
+                        const waOnClick = !mobile ? 'onclick="alert(\'Mobile number has not been updated by the member.\'); return false;"' : '';
+                        
+                        const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(p.full_name || p.role)}&background=f8fafc&color=1e293b&size=256`;
+                        const avatar = p.avatar_url || defaultAvatar;
+
+                        return `
+                        <div data-aos="fade-up" data-aos-delay="${delay}" class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 text-center relative overflow-hidden hover-lift group">
+                            <div class="absolute top-0 right-0 w-32 h-32 ${config.glowClass} rounded-full blur-2xl transition-all"></div>
+                            
+                            <div class="w-32 h-32 mx-auto rounded-full overflow-hidden mb-6 border-4 border-white shadow-xl relative z-10 bg-slate-50">
+                                <img src="${avatar}" alt="${config.title}" class="w-full h-full object-cover">
+                            </div>
+                            
+                            <h3 class="text-xl font-extrabold text-slate-800 mb-1 tracking-tight">${p.full_name || 'Awaiting Appointment'}</h3>
+                            <p class="${config.textClass} font-bold uppercase text-[10px] tracking-widest mb-6 ${config.bgClass} inline-block px-3 py-1 rounded-full border">${config.title}</p>
+                            
+                            <!-- WhatsApp Integration -->
+                            <a href="${waLink}" target="${mobile ? '_blank' : '_self'}" ${waOnClick} class="w-full flex items-center justify-center gap-2 text-white px-4 py-3 rounded-xl font-bold shadow-md transition-all relative z-10 ${waBtnClass}">
+                                <i class="fab fa-whatsapp text-lg"></i> Message via WhatsApp
+                            </a>
+                        </div>
+                        `;
+                    }).join('');
+                } else {
+                    container.innerHTML = `
+                        <div class="col-span-full text-center py-10 bg-white rounded-3xl border border-slate-200 shadow-sm">
+                            <i class="fas fa-users-slash text-slate-300 text-4xl mb-3 block"></i>
+                            <p class="text-slate-500 font-medium text-sm">No executive committee members have been assigned in the database yet.</p>
+                        </div>
+                    `;
+                }
+
+            } catch (err) {
+                console.error("Fetch Error:", err);
+                container.innerHTML = '<p class="col-span-full text-center text-rose-500 font-bold p-10">Failed to load committee data.</p>';
+            }
+        }
+
+        // Run fetch on load
+        document.addEventListener('DOMContentLoaded', fetchCommittee);
+    </script>
+</body>
+</html>

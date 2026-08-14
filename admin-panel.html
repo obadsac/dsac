@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wahatus Salamiyeen - Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        #page-loader { position: fixed; inset: 0; background: #f8fafc; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-indigo-500 selection:text-white overflow-hidden bg-slate-50">
+
+    <!-- Preloader -->
+    <div id="page-loader">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-slate-400 font-bold mt-4 tracking-widest text-[10px] uppercase">Authorizing Admin...</p>
+    </div>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/80 z-40 hidden md:hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
+
+    <div class="flex h-screen opacity-0 transition-opacity duration-700 w-full" id="main-content">
+        
+        <!-- Premium Admin Sidebar -->
+        <aside id="sidebar" class="w-64 bg-[#0B1120] text-slate-400 fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col border-r border-slate-800/50 z-50 shadow-2xl h-full">
+            <div class="h-24 flex flex-col items-center justify-center border-b border-slate-800/50 relative overflow-hidden shrink-0">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest text-indigo-400 bg-indigo-400/10 px-2.5 py-0.5 rounded border border-indigo-400/20 shadow-[0_0_10px_rgba(99,102,241,0.2)]">Super Admin</span>
+                <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-crown text-indigo-500 mr-2 drop-shadow-md"></i> Wahatus Salamiyeen</h1>
+            </div>
+            
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <a href="#" class="flex items-center px-4 py-3 bg-rose-500/10 rounded-xl text-rose-400 font-bold transition border border-rose-500/20 shadow-inner">
+                    <i class="fas fa-satellite-dish w-6"></i> Master Panel
+                </a>
+                <div class="pt-6 mt-6 border-t border-slate-800">
+                    <p class="px-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">System Navigation</p>
+                    <a href="secretary-dashboard.html" class="flex items-center px-4 py-2.5 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition">
+                        <i class="fas fa-user-tie w-6 text-emerald-500/70"></i> Secretary Panel
+                    </a>
+                    <a href="treasurer-dashboard.html" class="flex items-center px-4 py-2.5 hover:bg-slate-800/50 rounded-xl hover:text-white font-medium transition">
+                        <i class="fas fa-coins w-6 text-amber-500/70"></i> Treasurer Panel
+                    </a>
+                    <a href="event-admin.html" class="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-xl text-slate-400 hover:text-white font-medium transition">
+                        <i class="fas fa-calendar-check w-6"></i> Event Manager
+                    </a>
+                    <a href="member-portal.html" class="flex items-center px-4 py-2.5 hover:bg-slate-800 rounded-xl text-slate-400 hover:text-white font-medium transition">
+                        <i class="fas fa-user-circle w-6"></i> Member Portal
+                    </a>
+                    <a href="directory.html" class="flex items-center px-4 py-3 hover:bg-slate-800 rounded-xl text-slate-400 hover:text-white font-medium transition group">
+                        <i class="fas fa-address-book w-6 group-hover:text-cyan-400 transition-colors"></i> User Directory
+                    </a>
+                </div>
+            </nav>
+            <div class="p-4 border-t border-slate-800/50 shrink-0">
+                <button onclick="logoutUser()" class="w-full flex items-center justify-center px-4 py-3 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition font-medium border border-transparent hover:border-rose-500/20">
+                    <i class="fas fa-power-off mr-2"></i> Secure Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            <header class="h-16 md:h-20 glass-panel sticky top-0 flex items-center justify-between px-4 lg:px-10 z-20 shrink-0">
+                <div class="flex items-center">
+                    <button onclick="toggleSidebar()" class="md:hidden text-slate-600 focus:outline-none mr-3 sm:mr-4 hover:text-indigo-600 transition-colors"><i class="fas fa-bars text-xl sm:text-2xl"></i></button>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800 tracking-tight drop-shadow-sm">Master Control Panel</h2>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3 bg-white px-2 py-1.5 rounded-full shadow-sm border border-slate-200">
+                        <img id="headerAvatar" src="https://ui-avatars.com/api/?name=Admin&background=0f172a&color=fff" class="h-8 w-8 md:h-9 md:w-9 rounded-full border border-slate-200">
+                        <div class="hidden md:block pr-3">
+                            <p id="headerUserName" class="text-sm font-bold text-slate-800 leading-none">Loading...</p>
+                            <p class="text-[9px] text-indigo-600 font-bold uppercase tracking-widest mt-0.5">President</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+                <div class="max-w-7xl mx-auto pb-10">
+                    
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+                        <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-5 md:p-6 flex items-center">
+                            <div class="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl md:text-2xl mr-4 md:mr-5 border border-indigo-100 shrink-0">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div>
+                                <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Registered Members</p>
+                                <h3 id="totalMembers" class="text-2xl md:text-3xl font-extrabold text-slate-800"><i class="fas fa-spinner fa-spin text-sm"></i></h3>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-5 md:p-6 flex items-center">
+                            <div class="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl md:text-2xl mr-4 md:mr-5 border border-emerald-100 shrink-0">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div>
+                                <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Active Life Members</p>
+                                <h3 id="lifeMembers" class="text-2xl md:text-3xl font-extrabold text-slate-800"><i class="fas fa-spinner fa-spin text-sm"></i></h3>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-5 md:p-6 flex items-center sm:col-span-2 lg:col-span-1">
+                            <div class="h-12 w-12 md:h-14 md:w-14 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl md:text-2xl mr-4 md:mr-5 border border-amber-100 shrink-0">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div>
+                                <p class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Committee Members</p>
+                                <h3 id="committeeMembers" class="text-2xl md:text-3xl font-extrabold text-slate-800"><i class="fas fa-spinner fa-spin text-sm"></i></h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- User Management Table with FIXED Chrome Tabs -->
+                    <div class="bg-transparent md:bg-white md:rounded-t-xl md:rounded-b-3xl md:shadow-sm md:border border-slate-200 overflow-hidden mb-8">
+                        
+                        <!-- FIXED: Tabs Container - Auto Wraps & Avoids Horizontal Scroll -->
+                        <div class="bg-[#dfe1e5] px-2 md:px-4 pt-2 md:pt-3 flex flex-col md:flex-row md:items-end border-b border-slate-200 rounded-t-xl md:rounded-none">
+                            
+                            <!-- Sync Button (Moved to top on Mobile) -->
+                            <div class="w-full md:w-auto md:flex-1 flex justify-end order-first md:order-last md:pb-2">
+                                <button onclick="fetchUsers()" class="text-[10px] md:text-xs font-bold text-slate-600 hover:text-indigo-600 transition bg-white/50 hover:bg-white px-2.5 py-1.5 rounded-lg shadow-sm border border-slate-300/50 flex items-center"><i class="fas fa-sync-alt mr-1"></i> Sync</button>
+                            </div>
+
+                            <!-- Tabs Wrapper (Flex-1 on mobile so they fit screen perfectly) -->
+                            <div class="flex w-full md:w-auto justify-between gap-1 mt-2 md:mt-0">
+                                
+                                <button id="tab-Approved" onclick="switchTab('Approved')" class="tab-btn flex-1 md:flex-none flex flex-col sm:flex-row items-center justify-center px-1 sm:px-4 md:px-6 py-1.5 md:py-2.5 bg-white text-slate-800 font-bold text-[10px] sm:text-[13px] md:text-sm rounded-t-lg md:rounded-t-xl border-t border-l border-r border-slate-200 relative z-10 translate-y-[1px] gap-1 sm:gap-2 shadow-[0_-2px_10px_rgba(0,0,0,0.02)] transition-all">
+                                    <i class="fas fa-check-circle text-emerald-500 text-sm md:text-base"></i> <span class="leading-tight text-center">Active</span>
+                                </button>
+                                
+                                <button id="tab-Pending" onclick="switchTab('Pending')" class="tab-btn flex-1 md:flex-none flex flex-col sm:flex-row items-center justify-center px-1 sm:px-4 md:px-6 py-1.5 md:py-2.5 bg-[#f1f3f4] text-slate-500 hover:bg-slate-50 font-semibold text-[10px] sm:text-[13px] md:text-sm rounded-t-lg md:rounded-t-xl border-t border-l border-r border-slate-300/50 transition-colors gap-1 sm:gap-2">
+                                    <i class="fas fa-clock text-amber-500 text-sm md:text-base"></i> <span class="leading-tight text-center">Pending</span>
+                                </button>
+                                
+                                <button id="tab-Rejected" onclick="switchTab('Rejected')" class="tab-btn flex-1 md:flex-none flex flex-col sm:flex-row items-center justify-center px-1 sm:px-4 md:px-6 py-1.5 md:py-2.5 bg-[#f1f3f4] text-slate-500 hover:bg-slate-50 font-semibold text-[10px] sm:text-[13px] md:text-sm rounded-t-lg md:rounded-t-xl border-t border-l border-r border-slate-300/50 transition-colors gap-1 sm:gap-2">
+                                    <i class="fas fa-times-circle text-rose-500 text-sm md:text-base"></i> <span class="leading-tight text-center">Rejected</span>
+                                </button>
+                                
+                            </div>
+                        </div>
+                        
+                        <!-- Responsive Table Wrapper (Card view on Mobile) -->
+                        <div class="md:overflow-x-auto bg-slate-50 md:bg-transparent pt-4 md:pt-0">
+                            <table class="w-full text-left border-collapse block md:table">
+                                <thead class="hidden md:table-header-group">
+                                    <tr class="bg-white border-b border-slate-200 text-[10px] uppercase tracking-widest text-slate-500 font-bold">
+                                        <th class="py-4 px-4 md:px-6">Member Profile</th>
+                                        <th class="py-4 px-4 md:px-6 text-center">Batch</th>
+                                        <th class="py-4 px-4 md:px-6 text-center">Account Status</th>
+                                        <th class="py-4 px-4 md:px-6 text-center">System Role</th>
+                                        <th class="py-4 px-4 md:px-6 text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody" class="block md:table-row-group">
+                                    <!-- Dynamic Rows Loaded Here -->
+                                    <tr><td colspan="5" class="py-10 text-center block md:table-cell"><i class="fas fa-circle-notch fa-spin text-indigo-500 text-2xl"></i></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Supabase Setup & Logic -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Mobile Sidebar Toggle Logic
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        const supabaseUrl = 'https://nraqhwfobchmvjnbkhfd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYXFod2ZvYmNobXZqbmJraGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTMyMDgsImV4cCI6MjEwMDg4OTIwOH0.Q_UUnJPg_fvPePFGFc6RWwmf1fFs0J9lYUOlF-WQmfE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 1. Auth & Admin Role Validation
+                const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+                if (sessionError || !session) throw new Error("Not logged in");
+
+                const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', session.user.id).single();
+                
+                if (profile.role !== 'Admin') {
+                    alert("Unauthorized Access. Only Super Admins are allowed.");
+                    window.location.href = 'member-portal.html';
+                    return;
+                }
+
+                document.getElementById('headerUserName').innerText = profile.full_name || 'Admin';
+                document.getElementById('headerAvatar').src = profile.avatar_url || `https://ui-avatars.com/api/?name=Admin&background=4f46e5&color=fff`;
+                
+                await fetchUsers();
+
+                document.getElementById('page-loader').style.display = 'none';
+                document.getElementById('main-content').classList.remove('opacity-0');
+
+            } catch (err) {
+                console.error("Access Error:", err);
+                window.location.href = 'index.html';
+            }
+        });
+
+        let allUsersData = [];
+        let currentTabStatus = 'Approved'; 
+
+        // FIXED: Tab Script correctly sets the new responsive classes
+        function switchTab(status) {
+            currentTabStatus = status;
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn flex-1 md:flex-none flex flex-col sm:flex-row items-center justify-center px-1 sm:px-4 md:px-6 py-1.5 md:py-2.5 bg-[#f1f3f4] text-slate-500 hover:bg-slate-50 font-semibold text-[10px] sm:text-[13px] md:text-sm rounded-t-lg md:rounded-t-xl border-t border-l border-r border-slate-300/50 transition-colors gap-1 sm:gap-2";
+            });
+
+            const activeBtn = document.getElementById(`tab-${status}`);
+            activeBtn.className = "tab-btn flex-1 md:flex-none flex flex-col sm:flex-row items-center justify-center px-1 sm:px-4 md:px-6 py-1.5 md:py-2.5 bg-white text-slate-800 font-bold text-[10px] sm:text-[13px] md:text-sm rounded-t-lg md:rounded-t-xl border-t border-l border-r border-slate-200 relative z-10 translate-y-[1px] gap-1 sm:gap-2 shadow-[0_-2px_10px_rgba(0,0,0,0.02)] transition-all";
+
+            renderTable();
+        }
+
+        async function fetchUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = `<tr><td colspan="5" class="py-10 text-center block md:table-cell"><i class="fas fa-circle-notch fa-spin text-indigo-500 text-2xl"></i></td></tr>`;
+            
+            const { data: profiles, error } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (error || !profiles || profiles.length === 0) {
+                allUsersData = [];
+                renderTable();
+                return;
+            }
+
+            allUsersData = profiles;
+            
+            const approvedUsers = profiles.filter(p => p.status === 'Approved');
+            document.getElementById('totalMembers').innerText = approvedUsers.length;
+            document.getElementById('lifeMembers').innerText = approvedUsers.filter(p => p.member_type?.toLowerCase() === 'life member').length;
+            document.getElementById('committeeMembers').innerText = approvedUsers.filter(p => ['Admin', 'Secretary', 'Treasurer'].includes(p.role)).length;
+
+            renderTable(); 
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('usersTableBody');
+            const filteredUsers = allUsersData.filter(user => (user.status || 'Pending') === currentTabStatus);
+
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-10 text-center text-slate-500 font-bold block md:table-cell bg-white rounded-xl shadow-sm border border-slate-200 md:border-0 md:shadow-none">No ${currentTabStatus.toLowerCase()} members found in this category.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredUsers.map(user => {
+                const avatar = user.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name || 'M')}&background=f1f5f9&color=64748b`;
+                const role = user.role || 'Member';
+                const status = user.status || 'Pending';
+                const batch = user.batch_year || 'N/A';
+
+                const statusColor = status === 'Approved' ? 'text-emerald-600 bg-emerald-50 border-emerald-200' : 
+                                    status === 'Pending' ? 'text-amber-600 bg-amber-50 border-amber-200' : 
+                                    'text-rose-600 bg-rose-50 border-rose-200';
+
+                return `
+                <tr class="block md:table-row bg-white border md:border-b md:border-0 border-slate-200 rounded-2xl mb-4 md:mb-0 shadow-sm md:shadow-none hover:bg-slate-50/80 transition overflow-hidden">
+                    
+                    <td class="block md:table-cell py-4 px-4 md:px-6 border-b border-slate-100 md:border-0 bg-slate-50/50 md:bg-transparent">
+                        <div class="flex items-center space-x-3">
+                            <img src="${avatar}" class="w-10 h-10 rounded-full border border-slate-200 shadow-sm shrink-0">
+                            <div>
+                                <p class="font-bold text-slate-800 text-sm md:text-sm truncate max-w-[200px]">${user.full_name || 'Unknown User'}</p>
+                                <p class="text-[10px] font-bold text-slate-500 tracking-wider truncate max-w-[200px]">${user.email || 'No Email'}</p>
+                            </div>
+                        </div>
+                    </td>
+                    
+                    <td class="flex justify-between items-center md:table-cell py-3 md:py-4 px-4 md:px-6 text-sm font-bold text-slate-600 border-b border-slate-100 md:border-0 md:text-center">
+                        <span class="md:hidden text-[10px] text-slate-400 uppercase tracking-widest">Batch:</span>
+                        ${batch}
+                    </td>
+                    
+                    <td class="flex justify-between items-center md:table-cell py-3 md:py-4 px-4 md:px-6 border-b border-slate-100 md:border-0 md:text-center">
+                        <span class="md:hidden text-[10px] text-slate-400 uppercase tracking-widest">Status:</span>
+                        <select id="status-${user.id}" class="text-xs font-bold rounded-lg px-2 md:px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm border cursor-pointer ${statusColor} transition-colors">
+                            <option value="Approved" ${status === 'Approved' ? 'selected' : ''}>Approved</option>
+                            <option value="Pending" ${status === 'Pending' ? 'selected' : ''}>Pending</option>
+                            <option value="Rejected" ${status === 'Rejected' ? 'selected' : ''}>Rejected</option>
+                        </select>
+                    </td>
+
+                    <td class="flex justify-between items-center md:table-cell py-3 md:py-4 px-4 md:px-6 border-b border-slate-100 md:border-0 md:text-center">
+                        <span class="md:hidden text-[10px] text-slate-400 uppercase tracking-widest">Role:</span>
+                        <select id="role-${user.id}" class="text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-lg px-2 md:px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 shadow-sm cursor-pointer" ${status !== 'Approved' ? 'disabled title="Approve user first"' : ''}>
+                            <option value="Member" ${role === 'Member' ? 'selected' : ''}>Ordinary Member</option>
+                            <option value="Treasurer" ${role === 'Treasurer' ? 'selected' : ''}>Treasurer</option>
+                            <option value="Secretary" ${role === 'Secretary' ? 'selected' : ''}>Secretary</option>
+                            <option value="Admin" ${role === 'Admin' ? 'selected' : ''}>President (Admin)</option>
+                        </select>
+                    </td>
+                    
+                    <td class="block md:table-cell py-4 px-4 md:px-6 md:text-center bg-slate-50 md:bg-transparent">
+                        <button onclick="saveUserDetails('${user.id}', '${(user.full_name || '').replace(/'/g, "\\'")}', '${batch}')" class="w-full md:w-auto bg-indigo-900 text-white hover:bg-indigo-800 px-4 py-2.5 md:py-1.5 rounded-xl md:rounded-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all text-xs font-bold flex justify-center items-center gap-1.5 mx-auto">
+                            Save Changes <i class="fas fa-save text-[10px] opacity-70"></i>
+                        </button>
+                    </td>
+                    
+                </tr>
+                `;
+            }).join('');
+        }
+
+        async function saveUserDetails(userId, userName, batchYear) {
+            const newStatus = document.getElementById(`status-${userId}`).value;
+            const newRole = document.getElementById(`role-${userId}`).value;
+            
+            Swal.fire({
+                title: 'Save Profile Changes?',
+                html: `Are you sure you want to update <b>${userName}</b>?<br><br>
+                       <div class="text-left bg-slate-50 p-3 rounded-lg text-sm border border-slate-200">
+                           <p>Status: <span class="font-bold text-indigo-600">${newStatus}</span></p>
+                           <p>Role: <span class="font-bold text-indigo-600">${newRole}</span></p>
+                       </div>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#0f172a', 
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Confirm Update'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({ title: 'Updating System...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                    
+                    let updatePayload = { status: newStatus, role: newRole };
+
+                    if (newStatus === 'Approved') {
+                        const { data: existingUser } = await supabaseClient.from('profiles').select('member_id').eq('id', userId).single();
+                        
+                        if (!existingUser.member_id || existingUser.member_id.toUpperCase() === 'PENDING ID') {
+                            const validBatch = (batchYear && batchYear !== 'N/A' && batchYear !== 'undefined') ? batchYear : new Date().getFullYear();
+                            
+                            // Check latest 'DSOBA' ID in DB
+                            const { data: lastIdData } = await supabaseClient
+                                .from('profiles')
+                                .select('member_id')
+                                .like('member_id', `WS-${validBatch}-%`)
+                                .order('member_id', { ascending: false })
+                                .limit(1);
+
+                            let nextNumber = 1;
+                            if (lastIdData && lastIdData.length > 0 && lastIdData[0].member_id) {
+                                const parts = lastIdData[0].member_id.split('-');
+                                if(parts.length === 3) nextNumber = parseInt(parts[2]) + 1;
+                            }
+                            
+                            // Generate new DSOBA ID
+                            updatePayload.member_id = `WS-${validBatch}-${nextNumber.toString().padStart(2, '0')}`;
+                        }
+                    }
+
+                    const { error } = await supabaseClient
+                        .from('profiles')
+                        .update(updatePayload)
+                        .eq('id', userId);
+
+                    if (!error) {
+                        let successMsg = `${userName}'s profile has been successfully saved.`;
+                        if (updatePayload.member_id) successMsg += `<br><br>New ID: <b>${updatePayload.member_id}</b>`;
+                        
+                        Swal.fire({ title: 'Updated!', html: successMsg, icon: 'success' });
+                        fetchUsers(); 
+                    } else {
+                        Swal.fire('Error', error.message, 'error');
+                    }
+                }
+            });
+        }
+
+        async function logoutUser() {
+            await supabaseClient.auth.signOut();
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

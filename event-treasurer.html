@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Salamiyeen - Treasurer Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .hover-lift:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        #page-loader { position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased w-full">
+
+    <div id="page-loader">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-slate-500 font-bold text-xs uppercase tracking-widest mt-4">Loading Finance Desk...</p>
+    </div>
+
+    <div class="flex h-screen overflow-hidden opacity-0 transition-opacity duration-700 w-full" id="main-content">
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            
+            <header class="h-16 md:h-20 glass-panel sticky top-0 flex items-center justify-between px-4 lg:px-10 z-30 shrink-0">
+                <div class="flex items-center">
+                    <button onclick="goBack()" class="mr-3 md:mr-4 text-slate-500 hover:text-slate-800 transition flex items-center justify-center font-bold text-xs md:text-sm bg-slate-100 w-8 h-8 md:w-auto md:h-auto md:px-4 md:py-2 rounded-xl shrink-0">
+                        <i class="fas fa-arrow-left md:mr-2"></i> <span class="hidden md:inline">Back</span>
+                    </button>
+                    <div>
+                        <h2 class="text-lg md:text-2xl font-extrabold text-slate-800 tracking-tight flex items-center">
+                            Finance Desk <i class="fas fa-check-circle text-amber-500 text-sm ml-2"></i>
+                        </h2>
+                        <p class="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest truncate">Treasurer Controls</p>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+                <div class="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-amber-50/50 to-transparent -z-10 pointer-events-none"></div>
+
+                <div class="max-w-6xl mx-auto pb-10">
+                    
+                    <!-- Tabs -->
+                    <div class="flex justify-center mb-8">
+                        <div class="bg-slate-200/60 p-1.5 rounded-2xl inline-flex shadow-inner w-full max-w-md">
+                            <button onclick="switchTab('events')" id="btn-events" class="flex-1 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 bg-white text-amber-700 shadow-sm flex items-center justify-center">
+                                <i class="fas fa-ticket-alt mr-2"></i> Event Accounts
+                            </button>
+                            <button onclick="switchTab('funds')" id="btn-funds" class="flex-1 px-4 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 text-slate-500 hover:text-slate-700 flex items-center justify-center">
+                                <i class="fas fa-hand-holding-heart mr-2"></i> Fund Manager
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- SECTION 1: EVENT ACCOUNTS (Existing Code) -->
+                    <!-- ========================================== -->
+                    <div id="section-events" class="block animate-fade-in">
+                        <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-5 md:p-6 mb-6 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <div class="w-full sm:w-1/2 md:w-1/3">
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Select Paid Event</label>
+                                <div class="relative">
+                                    <i class="fas fa-calendar-check absolute left-4 top-1/2 -translate-y-1/2 text-amber-500"></i>
+                                    <select id="eventSelector" onchange="loadEventFinances()" class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-amber-500 outline-none transition text-sm font-bold shadow-inner text-slate-800 cursor-pointer appearance-none">
+                                        <option value="">Loading events...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="text-left sm:text-right w-full sm:w-auto">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Base Ticket Price</p>
+                                <p class="text-2xl font-extrabold text-amber-600">Rs. <span id="displayTicketPrice">0</span></p>
+                            </div>
+                        </div>
+
+                        <!-- Metrics Row -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6 md:mb-8">
+                            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total RSVPs</p>
+                                <h3 class="text-3xl font-extrabold text-slate-800" id="metric-total-rsvp">0</h3>
+                            </div>
+                            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 border-l-4 border-l-emerald-500">
+                                <p class="text-emerald-500 text-[10px] font-bold uppercase tracking-widest mb-1">Ticket Revenue</p>
+                                <h3 class="text-2xl font-extrabold text-slate-800">Rs. <span id="metric-collected">0</span></h3>
+                                <p class="text-[10px] text-slate-400 font-bold mt-1"><span id="metric-paid-count">0</span> Members Paid</p>
+                            </div>
+                            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 border-l-4 border-l-indigo-500">
+                                <p class="text-indigo-500 text-[10px] font-bold uppercase tracking-widest mb-1">Extra Donations</p>
+                                <h3 class="text-2xl font-extrabold text-slate-800">Rs. <span id="metric-donations">0</span></h3>
+                            </div>
+                            <div class="bg-slate-900 rounded-2xl p-5 shadow-lg border border-slate-800 text-white">
+                                <p class="text-rose-400 text-[10px] font-bold uppercase tracking-widest mb-1">Pending Dues</p>
+                                <h3 class="text-2xl font-extrabold text-white">Rs. <span id="metric-pending">0</span></h3>
+                            </div>
+                        </div>
+
+                        <!-- Event Payment Table -->
+                        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden min-h-[400px]">
+                            <div class="p-5 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                                <h3 class="text-lg font-extrabold text-slate-800 flex items-center">
+                                    <div class="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mr-3 shrink-0"><i class="fas fa-file-invoice"></i></div>
+                                    Bill Approvals & Tickets
+                                </h3>
+                            </div>
+                            <div class="overflow-x-auto w-full">
+                                <table class="w-full text-left border-collapse min-w-[700px]">
+                                    <thead class="bg-slate-50/50">
+                                        <tr class="text-slate-400 text-[10px] uppercase tracking-widest border-b border-slate-100">
+                                            <th class="py-4 px-5 font-semibold">Member Info</th>
+                                            <th class="py-4 px-5 font-semibold">Bill / Receipt</th>
+                                            <th class="py-4 px-5 font-semibold">Status</th>
+                                            <th class="py-4 px-5 font-semibold text-right">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rsvpTable" class="text-sm"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- SECTION 2: FUNDRAISING MANAGER (NEW)       -->
+                    <!-- ========================================== -->
+                    <div id="section-funds" class="hidden animate-fade-in">
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mb-8">
+                            
+                            <!-- Create Campaign Form -->
+                            <div class="lg:col-span-1">
+                                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden sticky top-6">
+                                    <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+                                        <h3 class="text-lg font-extrabold text-slate-800 flex items-center">
+                                            <div class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mr-3 shrink-0"><i class="fas fa-bullseye"></i></div>
+                                            New Campaign
+                                        </h3>
+                                    </div>
+                                    
+                                    <form id="campaignForm" class="p-6 space-y-5">
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Campaign Title</label>
+                                            <input type="text" id="campTitle" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-rose-500 outline-none transition text-sm font-bold shadow-inner" required placeholder="e.g. School Building Fund">
+                                        </div>
+
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Target (Rs)</label>
+                                                <input type="number" id="campTarget" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-rose-500 outline-none transition text-sm font-bold shadow-inner" required min="1000" placeholder="100000">
+                                            </div>
+                                            <div>
+                                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Deadline</label>
+                                                <input type="date" id="campDate" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-rose-500 outline-none transition text-sm font-bold shadow-inner" required>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Description</label>
+                                            <textarea id="campDesc" rows="3" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-rose-500 outline-none transition resize-none text-sm font-medium shadow-inner" placeholder="Why are we raising funds?"></textarea>
+                                        </div>
+
+                                        <button type="submit" id="btnCampSubmit" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-extrabold shadow-md hover:bg-rose-600 transition-all flex items-center justify-center">
+                                            <i class="fas fa-rocket mr-2"></i> Launch Campaign
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <!-- Verification Table for Standalone Donations -->
+                            <div class="lg:col-span-2">
+                                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden min-h-[400px] flex flex-col">
+                                    <div class="p-6 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                        <h3 class="text-lg font-extrabold text-slate-800 flex items-center">
+                                            <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mr-3 shrink-0"><i class="fas fa-check-double"></i></div>
+                                            Verify Donations
+                                        </h3>
+                                    </div>
+                                    
+                                    <div class="flex-1 overflow-x-auto p-2 md:p-0">
+                                        <table class="w-full text-left border-collapse block md:table">
+                                            <thead class="hidden md:table-header-group bg-slate-50/50">
+                                                <tr class="text-slate-400 text-[10px] uppercase tracking-widest border-b border-slate-100">
+                                                    <th class="py-4 px-5 font-semibold">Member & Campaign</th>
+                                                    <th class="py-4 px-5 font-semibold">Receipt</th>
+                                                    <th class="py-4 px-5 font-semibold">Amount</th>
+                                                    <th class="py-4 px-5 font-semibold text-right">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="pendingDonationsTable" class="block md:table-row-group text-sm">
+                                                <!-- Dynamic Rows -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        function switchTab(tabName) {
+            const evSec = document.getElementById('section-events');
+            const fundSec = document.getElementById('section-funds');
+            const btnEv = document.getElementById('btn-events');
+            const btnFund = document.getElementById('btn-funds');
+
+            if (tabName === 'events') {
+                evSec.classList.remove('hidden'); fundSec.classList.add('hidden');
+                btnEv.classList.add('bg-white', 'text-amber-700', 'shadow-sm'); btnEv.classList.remove('text-slate-500', 'hover:text-slate-700');
+                btnFund.classList.remove('bg-white', 'text-amber-700', 'shadow-sm'); btnFund.classList.add('text-slate-500', 'hover:text-slate-700');
+            } else {
+                fundSec.classList.remove('hidden'); evSec.classList.add('hidden');
+                btnFund.classList.add('bg-white', 'text-amber-700', 'shadow-sm'); btnFund.classList.remove('text-slate-500', 'hover:text-slate-700');
+                btnEv.classList.remove('bg-white', 'text-amber-700', 'shadow-sm'); btnEv.classList.add('text-slate-500', 'hover:text-slate-700');
+                loadFundraisingData(); // Load fundraising data when tab is clicked
+            }
+        }
+
+        const supabaseUrl = 'https://nraqhwfobchmvjnbkhfd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYXFod2ZvYmNobXZqbmJraGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTMyMDgsImV4cCI6MjEwMDg4OTIwOH0.Q_UUnJPg_fvPePFGFc6RWwmf1fFs0J9lYUOlF-WQmfE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+        
+        let currentUserRole = '';
+        let currentEventPrice = 0;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) { window.location.href = 'index.html'; return; }
+
+                const userId = session.user.id;
+                const { data: profile } = await supabaseClient.from('profiles').select('role').eq('id', userId).single();
+                currentUserRole = profile?.role || 'Member';
+                
+                if (currentUserRole !== 'Admin' && currentUserRole !== 'Treasurer') {
+                    alert("Access Denied!"); window.location.href = 'member-portal.html'; return;
+                }
+
+                await fetchPaidEvents();
+                document.getElementById('page-loader').style.display = 'none';
+                document.getElementById('main-content').classList.remove('opacity-0');
+            } catch (err) { console.error(err); }
+        });
+
+        function goBack() {
+            if(currentUserRole === 'Admin') window.location.href = 'admin-panel.html';
+            else window.location.href = 'member-portal.html';
+        }
+
+        // --- 1. EVENT FINANCES LOGIC ---
+        async function fetchPaidEvents() {
+            const selector = document.getElementById('eventSelector');
+            try {
+                const { data } = await supabaseClient.from('events').select('*').eq('is_paid', true).order('event_date', { ascending: false });
+                if (data && data.length > 0) {
+                    selector.innerHTML = `<option value="" disabled selected>-- Select an Event --</option>`;
+                    data.forEach(ev => { selector.innerHTML += `<option value="${ev.id}" data-price="${ev.fee_amount}">${ev.title} (${new Date(ev.event_date).toLocaleDateString()})</option>`; });
+                } else { selector.innerHTML = `<option value="">No paid events found.</option>`; }
+            } catch (error) {}
+        }
+
+        async function loadEventFinances() {
+            const selector = document.getElementById('eventSelector');
+            const eventId = selector.value;
+            currentEventPrice = parseFloat(selector.options[selector.selectedIndex].getAttribute('data-price') || 0);
+            if (!eventId) return;
+
+            document.getElementById('displayTicketPrice').innerText = currentEventPrice.toLocaleString('en-IN');
+            
+            try {
+                const { data } = await supabaseClient.from('event_rsvps').select('*, profiles(full_name)').eq('event_id', eventId).order('created_at', { ascending: false });
+                
+                let paidCount = 0, pendingCount = 0, totalDonations = 0;
+                (data || []).forEach(r => {
+                    if(r.payment_status === 'Paid') { paidCount++; totalDonations += Number(r.donation_amount||0); }
+                    else { pendingCount++; }
+                });
+
+                document.getElementById('metric-total-rsvp').innerText = (data||[]).length;
+                document.getElementById('metric-paid-count').innerText = paidCount;
+                document.getElementById('metric-collected').innerText = (paidCount * currentEventPrice).toLocaleString('en-IN');
+                document.getElementById('metric-pending').innerText = (pendingCount * currentEventPrice).toLocaleString('en-IN');
+                document.getElementById('metric-donations').innerText = totalDonations.toLocaleString('en-IN');
+
+                const tbody = document.getElementById('rsvpTable');
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(rsvp => {
+                        const isPaid = rsvp.payment_status === 'Paid';
+                        const memberName = rsvp.profiles?.full_name || 'Verified Member';
+                        const dateStr = new Date(rsvp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                        const statusBadge = isPaid 
+                            ? `<span class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider"><i class="fas fa-check-circle mr-1"></i> Paid</span>`
+                            : `<span class="bg-rose-50 text-rose-600 border border-rose-200 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider"><i class="fas fa-clock mr-1"></i> Pending</span>`;
+                        
+                        const receiptLink = rsvp.receipt_url ? `<a href="${rsvp.receipt_url}" target="_blank" class="text-blue-500 font-bold text-[11px] underline">View Bill</a>` : `<span class="text-slate-400 text-[10px] italic">No Bill</span>`;
+                        const actionBtn = isPaid ? `<span class="text-slate-400 text-xs font-bold uppercase"><i class="fas fa-lock mr-1"></i> Cleared</span>` : `<button onclick="approveEventPayment('${rsvp.id}', '${memberName.replace(/'/g, "\\'")}', ${!!rsvp.receipt_url})" class="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold shadow-sm hover:bg-emerald-600 transition-colors">Verify & Approve</button>`;
+
+                        return `<tr class="border-b border-slate-100"><td class="py-4 px-5 font-bold text-slate-800">${memberName}<br><span class="text-[9px] text-slate-400 font-normal uppercase tracking-widest">${dateStr}</span></td><td class="py-4 px-5">${receiptLink}</td><td class="py-4 px-5">${statusBadge}</td><td class="py-4 px-5 text-right">${actionBtn}</td></tr>`;
+                    }).join('');
+                } else { tbody.innerHTML = `<tr><td colspan="4" class="text-center py-10 text-slate-400 font-medium">No registrations found.</td></tr>`; }
+            } catch (error) { console.error(error); }
+        }
+
+        async function approveEventPayment(rsvpId, name, hasReceipt) {
+            const res = await Swal.fire({ title: 'Confirm Payment', html: `Verify payment for <b>${name}</b>?`, icon: 'question', showCancelButton: true, confirmButtonColor: '#059669', confirmButtonText: 'Yes, Approve', customClass: { popup: 'rounded-3xl' } });
+            if (res.isConfirmed) {
+                await supabaseClient.from('event_rsvps').update({ payment_status: 'Paid' }).eq('id', rsvpId);
+                Swal.fire({ title: 'Success', icon: 'success', timer: 1500, showConfirmButton: false });
+                loadEventFinances();
+            }
+        }
+
+        // --- 2. FUNDRAISING MANAGER LOGIC (NEW) ---
+
+        // Create Campaign
+        document.getElementById('campaignForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnCampSubmit');
+            btn.innerHTML = `<i class="fas fa-circle-notch fa-spin mr-2"></i> Saving...`; btn.disabled = true;
+
+            const newCamp = {
+                title: document.getElementById('campTitle').value,
+                target_amount: document.getElementById('campTarget').value,
+                deadline: document.getElementById('campDate').value,
+                description: document.getElementById('campDesc').value,
+                status: 'Active'
+            };
+
+            try {
+                const { error } = await supabaseClient.from('fundraising_campaigns').insert([newCamp]);
+                if(error) throw error;
+                Swal.fire({ title: 'Campaign Launched!', icon: 'success', customClass: { popup: 'rounded-3xl' }});
+                document.getElementById('campaignForm').reset();
+            } catch(e) { Swal.fire('Error', 'Failed to create campaign', 'error'); }
+            btn.innerHTML = `<i class="fas fa-rocket mr-2"></i> Launch Campaign`; btn.disabled = false;
+        });
+
+        // Load Pending Donations to Verify
+        async function loadFundraisingData() {
+            const tbody = document.getElementById('pendingDonationsTable');
+            try {
+                const { data, error } = await supabaseClient
+                    .from('campaign_donations') // Neengal sonnathu polave donation table-il irunthu thaan edukkirom
+                    .select('*, profiles(full_name), fundraising_campaigns!campaign_donations_campaign_id_fkey(title)') // 2 table-aiyum serthu edukkirom
+                    .eq('status', 'pending')
+                    .order('created_at', { ascending: false });
+
+                // Error irunthaal console-il kaatta intha line add pannungal
+                if (error) {
+                    console.error("Supabase Error fetching donations:", error);
+                    throw error; 
+                }
+
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(don => {
+                        const memberName = don.profiles?.full_name || 'Member';
+                        const campTitle = don.fundraising_campaigns?.title || 'Unknown';
+                        const receiptLink = don.receipt_url ? `<a href="${don.receipt_url}" target="_blank" class="text-blue-500 font-bold text-[11px] underline">View Bill</a>` : `<span class="text-slate-400 text-[10px] italic">No Bill</span>`;
+                        
+                        return `
+                            <tr class="border-b border-slate-100 hover:bg-slate-50 transition block md:table-row p-4 md:p-0">
+                                <td class="block md:table-cell py-2 md:py-4 px-2 md:px-5 font-bold text-slate-800 leading-tight">
+                                    <span class="md:hidden text-[9px] uppercase tracking-widest text-slate-400 mr-2">Member:</span>${memberName}<br>
+                                    <span class="text-[10px] text-slate-500 font-semibold bg-slate-100 px-2 py-0.5 rounded mt-1 inline-block">${campTitle}</span>
+                                </td>
+                                <td class="block md:table-cell py-2 md:py-4 px-2 md:px-5">
+                                    <span class="md:hidden text-[9px] uppercase tracking-widest text-slate-400 mr-2">Receipt:</span>${receiptLink}
+                                </td>
+                                <td class="block md:table-cell py-2 md:py-4 px-2 md:px-5 font-extrabold text-emerald-600">
+                                    <span class="md:hidden text-[9px] uppercase tracking-widest text-slate-400 mr-2">Amt:</span>Rs. ${Number(don.amount).toLocaleString('en-IN')}
+                                </td>
+                                <td class="block md:table-cell py-3 md:py-4 px-2 md:px-5 md:text-right">
+                                    <button onclick="approveDonation('${don.id}', '${don.campaign_id}', ${don.amount})" class="bg-emerald-600 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-md hover:bg-emerald-500 transition-colors w-full md:w-auto">
+                                        <i class="fas fa-check-double mr-1"></i> Verify
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-12 text-slate-400 font-medium">No pending donations to verify.</td></tr>`;
+                }
+            } catch(e) {
+                // Table-il error varuvathai kaatta
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-12 text-rose-500 font-medium">Failed to load donations. Check Console (F12).</td></tr>`;
+            }
+        }
+
+        // Approve Campaign Donation and update Campaign Total
+        async function approveDonation(donationId, campaignId, amount) {
+            const res = await Swal.fire({ title: 'Verify Donation', text: `Approve Rs.${amount} for this campaign?`, icon: 'question', showCancelButton: true, confirmButtonColor: '#059669', customClass: { popup: 'rounded-3xl' } });
+            
+            if(res.isConfirmed) {
+                try {
+                    // 1. Update Donation Status
+                    await supabaseClient.from('campaign_donations').update({ status: 'approved' }).eq('id', donationId);
+                    
+                    // 2. Fetch current campaign total and update it
+                    const { data: campData } = await supabaseClient.from('fundraising_campaigns').select('collected_amount').eq('id', campaignId).single();
+                    const newTotal = Number(campData.collected_amount || 0) + Number(amount);
+                    await supabaseClient.from('fundraising_campaigns').update({ collected_amount: newTotal }).eq('id', campaignId);
+
+                    Swal.fire({ title: 'Verified!', icon: 'success', timer: 1500, showConfirmButton: false });
+                    loadFundraisingData(); // Refresh list
+
+                } catch(e) { Swal.fire('Error', 'Verification failed.', 'error'); }
+            }
+        }
+    </script>
+</body>
+</html>

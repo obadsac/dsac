@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en" class="overflow-x-hidden">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Salamiyeen - Admin Reports</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(0,0,0,0.05); }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        #page-loader { position: fixed; inset: 0; background: #ffffff; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body class="text-slate-800 antialiased w-full">
+
+    <div id="page-loader">
+        <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-slate-100"></div>
+            <div class="absolute inset-0 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-slate-500 font-bold text-xs uppercase tracking-widest mt-4">Generating Reports...</p>
+    </div>
+
+    <div class="flex h-screen overflow-hidden opacity-0 transition-opacity duration-700 w-full" id="main-content">
+        <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
+            
+            <header class="h-16 md:h-20 glass-panel sticky top-0 flex items-center justify-between px-4 lg:px-10 z-30 shrink-0">
+                <div class="flex items-center">
+                    <button onclick="window.history.back()" class="mr-3 md:mr-4 text-slate-500 hover:text-slate-800 transition flex items-center justify-center font-bold text-xs md:text-sm bg-slate-100 w-8 h-8 md:w-auto md:h-auto md:px-4 md:py-2 rounded-xl shrink-0">
+                        <i class="fas fa-arrow-left md:mr-2"></i> <span class="hidden md:inline">Back</span>
+                    </button>
+                    <div>
+                        <h2 class="text-lg md:text-2xl font-extrabold text-slate-800 tracking-tight">Admin Reports Center</h2>
+                        <p class="text-[9px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest truncate">Analytics & Exports</p>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6 lg:p-8 relative">
+                <div class="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-indigo-50/50 to-transparent -z-10 pointer-events-none"></div>
+
+                <div class="max-w-6xl mx-auto pb-10">
+                    
+                    <!-- Report Navigation Tabs -->
+                    <div class="flex justify-center mb-8">
+                        <div class="bg-slate-200/60 p-1.5 rounded-2xl inline-flex flex-col sm:flex-row shadow-inner w-full sm:w-auto">
+                            <button onclick="switchReport('participants')" id="tab-participants" class="px-5 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 bg-white text-indigo-700 shadow-sm flex items-center justify-center">
+                                <i class="fas fa-users mr-2"></i> Participants
+                            </button>
+                            <button onclick="switchReport('accounts')" id="tab-accounts" class="px-5 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 text-slate-500 hover:text-slate-700 flex items-center justify-center">
+                                <i class="fas fa-file-invoice-dollar mr-2"></i> Event Accounts
+                            </button>
+                            <button onclick="switchReport('donations')" id="tab-donations" class="px-5 py-2.5 text-xs sm:text-sm font-bold rounded-xl transition-all duration-300 text-slate-500 hover:text-slate-700 flex items-center justify-center">
+                                <i class="fas fa-hand-holding-heart mr-2"></i> Donations
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- REPORT 1: EVENT PARTICIPANTS               -->
+                    <!-- ========================================== -->
+                    <div id="report-participants" class="block animate-fade-in">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 mb-6 flex justify-between items-center">
+                            <div class="w-full sm:w-1/2">
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Select Event</label>
+                                <select id="partEventSelector" onchange="loadParticipantReport()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-slate-800">
+                                    <option value="">Loading events...</option>
+                                </select>
+                            </div>
+                            <button onclick="exportTableToCSV('participantTable', 'Participant_Report.csv')" class="hidden sm:flex bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg text-sm font-bold border border-indigo-200 hover:bg-indigo-600 hover:text-white transition">
+                                <i class="fas fa-download mr-2"></i> Export CSV
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200 text-center">
+                                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Total Expected</p>
+                                <h3 class="text-3xl font-extrabold text-slate-800" id="part-total">0</h3>
+                            </div>
+                            <div class="bg-emerald-50 rounded-xl p-5 shadow-sm border border-emerald-200 text-center">
+                                <p class="text-emerald-600 text-[10px] font-bold uppercase tracking-widest mb-1">Checked In (Attended)</p>
+                                <h3 class="text-3xl font-extrabold text-emerald-700" id="part-attended">0</h3>
+                            </div>
+                            <div class="bg-rose-50 rounded-xl p-5 shadow-sm border border-rose-200 text-center">
+                                <p class="text-rose-600 text-[10px] font-bold uppercase tracking-widest mb-1">Pending Entry</p>
+                                <h3 class="text-3xl font-extrabold text-rose-700" id="part-pending">0</h3>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div class="overflow-x-auto w-full">
+                                <table class="w-full text-left border-collapse" id="participantTable">
+                                    <thead class="bg-slate-50/50">
+                                        <tr class="text-slate-400 text-[10px] uppercase tracking-widest border-b border-slate-100">
+                                            <th class="py-4 px-5 font-semibold">Member Name</th>
+                                            <th class="py-4 px-5 font-semibold">RSVP Date</th>
+                                            <th class="py-4 px-5 font-semibold">Attendance Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="participantList" class="text-sm"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- REPORT 2: EVENT ACCOUNTS                   -->
+                    <!-- ========================================== -->
+                    <div id="report-accounts" class="hidden animate-fade-in">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 mb-6 flex justify-between items-center">
+                            <div class="w-full sm:w-1/2">
+                                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">Select Paid Event</label>
+                                <select id="accEventSelector" onchange="loadAccountsReport()" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-sm font-bold text-slate-800">
+                                    <option value="">Loading paid events...</option>
+                                </select>
+                            </div>
+                            <button onclick="exportTableToCSV('accountTable', 'Accounts_Report.csv')" class="hidden sm:flex bg-amber-50 text-amber-600 px-4 py-2 rounded-lg text-sm font-bold border border-amber-200 hover:bg-amber-600 hover:text-white transition">
+                                <i class="fas fa-download mr-2"></i> Export CSV
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                            <!-- New: Total Registered -->
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 border-b-4 border-b-blue-500 text-center">
+                                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Registered</p>
+                                <h3 class="text-2xl font-extrabold text-slate-800" id="acc-registered">0</h3>
+                            </div>
+                            <!-- New: Total Paid -->
+                            <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200 border-b-4 border-b-emerald-500 text-center">
+                                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mb-1">Paid Members</p>
+                                <h3 class="text-2xl font-extrabold text-slate-800" id="acc-paid-count">0</h3>
+                            </div>
+                            <!-- Existing: Ticket Revenue -->
+                            <div class="bg-emerald-50 rounded-xl p-4 shadow-sm border border-emerald-200 text-center">
+                                <p class="text-emerald-600 text-[10px] font-bold uppercase tracking-widest mb-1">Revenue</p>
+                                <h3 class="text-xl font-extrabold text-emerald-700">Rs.<span id="acc-revenue">0</span></h3>
+                            </div>
+                            <!-- Existing: Pending Dues -->
+                            <div class="bg-rose-50 rounded-xl p-4 shadow-sm border border-rose-200 text-center">
+                                <p class="text-rose-600 text-[10px] font-bold uppercase tracking-widest mb-1">Pending</p>
+                                <h3 class="text-xl font-extrabold text-rose-700">Rs.<span id="acc-pending">0</span></h3>
+                            </div>
+                            <!-- Existing: Extra Donations -->
+                            <div class="bg-indigo-50 rounded-xl p-4 shadow-sm border border-indigo-200 text-center">
+                                <p class="text-indigo-600 text-[10px] font-bold uppercase tracking-widest mb-1">Donations</p>
+                                <h3 class="text-xl font-extrabold text-indigo-700">Rs.<span id="acc-donations">0</span></h3>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div class="overflow-x-auto w-full">
+                                <table class="w-full text-left border-collapse" id="accountTable">
+                                    <thead class="bg-slate-50/50">
+                                        <tr class="text-slate-400 text-[10px] uppercase tracking-widest border-b border-slate-100">
+                                            <th class="py-4 px-5 font-semibold">Member Name</th>
+                                            <th class="py-4 px-5 font-semibold">Payment Status</th>
+                                            <th class="py-4 px-5 font-semibold">Base Ticket (Rs)</th>
+                                            <th class="py-4 px-5 font-semibold">Extra Donation (Rs)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="accountList" class="text-sm"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- REPORT 3: CAMPAIGN DONATIONS               -->
+                    <!-- ========================================== -->
+                    <div id="report-donations" class="hidden animate-fade-in">
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 md:p-6 mb-6 flex justify-between items-center">
+                            <h3 class="text-lg font-extrabold text-slate-800 flex items-center">
+                                <div class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mr-3 shrink-0"><i class="fas fa-bullseye"></i></div>
+                                Fundraising Overview
+                            </h3>
+                            <button onclick="exportTableToCSV('donationTable', 'Donations_Report.csv')" class="bg-rose-50 text-rose-600 px-4 py-2 rounded-lg text-sm font-bold border border-rose-200 hover:bg-rose-600 hover:text-white transition">
+                                <i class="fas fa-download mr-2"></i> Export CSV
+                            </button>
+                        </div>
+
+                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                            <div class="overflow-x-auto w-full">
+                                <table class="w-full text-left border-collapse" id="donationTable">
+                                    <thead class="bg-slate-50/50">
+                                        <tr class="text-slate-400 text-[10px] uppercase tracking-widest border-b border-slate-100">
+                                            <th class="py-4 px-5 font-semibold">Campaign Title</th>
+                                            <th class="py-4 px-5 font-semibold">Deadline</th>
+                                            <th class="py-4 px-5 font-semibold">Target (Rs)</th>
+                                            <th class="py-4 px-5 font-semibold">Collected (Rs)</th>
+                                            <th class="py-4 px-5 font-semibold">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="donationList" class="text-sm"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = 'https://nraqhwfobchmvjnbkhfd.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5yYXFod2ZvYmNobXZqbmJraGZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUzMTMyMDgsImV4cCI6MjEwMDg4OTIwOH0.Q_UUnJPg_fvPePFGFc6RWwmf1fFs0J9lYUOlF-WQmfE';
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Fetch events for selectors
+            await fetchAllEvents();
+            document.getElementById('page-loader').style.display = 'none';
+            document.getElementById('main-content').classList.remove('opacity-0');
+        });
+
+        // TABS LOGIC
+        function switchReport(tab) {
+            document.getElementById('report-participants').classList.add('hidden');
+            document.getElementById('report-accounts').classList.add('hidden');
+            document.getElementById('report-donations').classList.add('hidden');
+            
+            const tabs = ['participants', 'accounts', 'donations'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                btn.classList.remove('bg-white', 'text-indigo-700', 'shadow-sm');
+                btn.classList.add('text-slate-500');
+            });
+
+            document.getElementById(`report-${tab}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-${tab}`);
+            activeBtn.classList.remove('text-slate-500');
+            activeBtn.classList.add('bg-white', 'text-indigo-700', 'shadow-sm');
+
+            if(tab === 'donations') loadDonationsReport();
+        }
+
+        async function fetchAllEvents() {
+            try {
+                const { data } = await supabaseClient.from('events').select('*').order('event_date', { ascending: false });
+                const partSel = document.getElementById('partEventSelector');
+                const accSel = document.getElementById('accEventSelector');
+                
+                partSel.innerHTML = `<option value="">-- Select an Event --</option>`;
+                accSel.innerHTML = `<option value="">-- Select a Paid Event --</option>`;
+
+                (data || []).forEach(ev => {
+                    partSel.innerHTML += `<option value="${ev.id}">${ev.title}</option>`;
+                    if(ev.is_paid) {
+                        accSel.innerHTML += `<option value="${ev.id}" data-price="${ev.fee_amount}">${ev.title}</option>`;
+                    }
+                });
+            } catch(e) { console.error(e); }
+        }
+
+        // REPORT 1: PARTICIPANTS
+        async function loadParticipantReport() {
+            const eventId = document.getElementById('partEventSelector').value;
+            if(!eventId) return;
+
+            const tbody = document.getElementById('participantList');
+            tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4">Loading...</td></tr>`;
+
+            try {
+                const { data } = await supabaseClient.from('event_rsvps')
+                    .select('*, profiles(full_name)').eq('event_id', eventId);
+                
+                let attended = 0;
+                (data || []).forEach(r => { if(r.attendance_status === 'Attended') attended++; });
+
+                document.getElementById('part-total').innerText = (data || []).length;
+                document.getElementById('part-attended').innerText = attended;
+                document.getElementById('part-pending').innerText = (data || []).length - attended;
+
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(r => `
+                        <tr class="border-b border-slate-100">
+                            <td class="py-3 px-5 font-bold text-slate-800">${r.profiles?.full_name || 'Member'}</td>
+                            <td class="py-3 px-5">${new Date(r.created_at).toLocaleDateString()}</td>
+                            <td class="py-3 px-5 font-bold ${r.attendance_status === 'Attended' ? 'text-emerald-600' : 'text-slate-400'}">${r.attendance_status || 'Pending'}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-slate-400">No participants found.</td></tr>`;
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // REPORT 2: ACCOUNTS
+        // REPORT 2: ACCOUNTS
+        async function loadAccountsReport() {
+            const selector = document.getElementById('accEventSelector');
+            const eventId = selector.value;
+            if(!eventId) return;
+
+            const price = parseFloat(selector.options[selector.selectedIndex].getAttribute('data-price') || 0);
+            const tbody = document.getElementById('accountList');
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4">Loading...</td></tr>`;
+
+            try {
+                const { data } = await supabaseClient.from('event_rsvps')
+                    .select('*, profiles(full_name)').eq('event_id', eventId);
+                
+                let rev = 0, pending = 0, donations = 0;
+                let paidCount = 0;
+                let registeredCount = (data || []).length; // Total Registered
+
+                (data || []).forEach(r => {
+                    if(r.payment_status === 'Paid') { 
+                        rev += price; 
+                        donations += Number(r.donation_amount||0); 
+                        paidCount++; // Paid Members count
+                    }
+                    else if (r.payment_status !== 'Refunded') { 
+                        pending += price; 
+                    }
+                });
+
+                // Updating UI metrics
+                document.getElementById('acc-registered').innerText = registeredCount;
+                document.getElementById('acc-paid-count').innerText = paidCount;
+                document.getElementById('acc-revenue').innerText = rev.toLocaleString();
+                document.getElementById('acc-pending').innerText = pending.toLocaleString();
+                document.getElementById('acc-donations').innerText = donations.toLocaleString();
+
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(r => `
+                        <tr class="border-b border-slate-100">
+                            <td class="py-3 px-5 font-bold text-slate-800">${r.profiles?.full_name || 'Member'}</td>
+                            <td class="py-3 px-5 font-bold ${r.payment_status === 'Paid' ? 'text-emerald-600' : (r.payment_status === 'Refunded' ? 'text-rose-500' : 'text-amber-500')}">${r.payment_status || 'Pending'}</td>
+                            <td class="py-3 px-5">Rs. ${price}</td>
+                            <td class="py-3 px-5">Rs. ${r.donation_amount || 0}</td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-slate-400">No records found.</td></tr>`;
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // REPORT 3: DONATIONS
+        async function loadDonationsReport() {
+            const tbody = document.getElementById('donationList');
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4">Loading campaigns...</td></tr>`;
+
+            try {
+                const { data } = await supabaseClient.from('fundraising_campaigns')
+                    .select('*').order('created_at', { ascending: false });
+
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(c => {
+                        let pct = (Number(c.collected_amount || 0) / Number(c.target_amount || 1)) * 100;
+                        let statusColor = pct >= 100 ? 'text-emerald-600 bg-emerald-50' : 'text-blue-600 bg-blue-50';
+                        return `
+                        <tr class="border-b border-slate-100">
+                            <td class="py-4 px-5 font-bold text-slate-800">${c.title}</td>
+                            <td class="py-4 px-5">${new Date(c.deadline).toLocaleDateString()}</td>
+                            <td class="py-4 px-5 font-semibold text-slate-500">Rs. ${Number(c.target_amount).toLocaleString()}</td>
+                            <td class="py-4 px-5 font-bold text-emerald-600">Rs. ${Number(c.collected_amount || 0).toLocaleString()}</td>
+                            <td class="py-4 px-5"><span class="px-2 py-1 rounded text-xs font-bold ${statusColor}">${pct.toFixed(0)}% Achieved</span></td>
+                        </tr>
+                    `}).join('');
+                } else {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-slate-400">No campaigns found.</td></tr>`;
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        // CSV EXPORT LOGIC
+        function exportTableToCSV(tableId, filename) {
+            const table = document.getElementById(tableId);
+            let csv = [];
+            let rows = table.querySelectorAll("tr");
+            
+            for (let i = 0; i < rows.length; i++) {
+                let row = [], cols = rows[i].querySelectorAll("td, th");
+                for (let j = 0; j < cols.length; j++) 
+                    row.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+                csv.push(row.join(","));
+            }
+
+            downloadCSV(csv.join("\n"), filename);
+        }
+
+        function downloadCSV(csv, filename) {
+            let csvFile = new Blob([csv], {type: "text/csv"});
+            let downloadLink = document.createElement("a");
+            downloadLink.download = filename;
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    </script>
+</body>
+</html>
