@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dharussalam OBA - Fundraising & Donations</title>
+    <title>Wahatus Salamiyeen - Fundraising & Donations</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -40,7 +40,7 @@
                 <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                 <span class="absolute top-3 left-3 text-[9px] font-bold uppercase tracking-widest text-emerald-400 bg-emerald-400/10 px-2.5 py-0.5 rounded border border-emerald-400/20">Alumni</span>
                 <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
-                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2"></i> Dharussalam OBA</h1>
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2"></i> Wahatus Salamiyeen</h1>
             </div>
             
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
@@ -200,10 +200,9 @@
             const container = document.getElementById('campaignsContainer');
             try {
                 const { data, error } = await supabaseClient
-                    .from('fundraising_campaigns')
+                    .from('fundraising_campaigns') // Changed from 'campaign_donations'
                     .select('*')
-                    .eq('status', 'Active')
-                    .order('deadline', { ascending: true });
+                    .order('created_at', { ascending: false });
 
                 if (error) throw error;
 
@@ -259,6 +258,7 @@
         }
 
         // 2. Fetch User's Donation History (Table)
+        // 2. Fetch User's Donation History (Table)
         async function fetchMyDonations() {
             const tbody = document.getElementById('donationsTable');
             try {
@@ -273,7 +273,9 @@
                 if (data && data.length > 0) {
                     tbody.innerHTML = data.map(don => {
                         const dateStr = new Date(don.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                        const isVerified = don.status === 'Verified';
+                        
+                        // இந்த வரியில்தான் மாற்றம் செய்யப்பட்டுள்ளது!
+                        const isVerified = don.status === 'approved' || don.status === 'Verified';
                         
                         const statusBadge = isVerified 
                             ? `<span class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider"><i class="fas fa-check-circle mr-1"></i> Verified</span>`
