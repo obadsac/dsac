@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dharussalam OBA - My Profile</title>
+    <title>Wahatus Salamiyeen - My Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -59,7 +59,7 @@
                 <!-- Mobile Close Button -->
                 <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
 
-                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Dharussalam OBA</h1>
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Wahatus Salamiyeen</h1>
             </div>
             
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
@@ -129,6 +129,10 @@
                         <div class="h-28 md:h-40 lg:h-52 bg-gradient-to-r from-slate-900 via-emerald-900 to-slate-900 relative overflow-hidden">
                             <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
                             <div class="absolute -bottom-24 -right-24 w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl"></div>
+                            <!-- Puthusa add panna text -->
+                            <h1 class="relative z-10 text-3xl md:text-5xl lg:text-8xl font-extrabold text-white tracking-widest drop-shadow-md text-center opacity-90">
+                                Wahatus Salamiyeen
+                            </h1>
                         </div>
                         
                         <div class="px-5 md:px-8 pb-6 md:pb-8 relative">
@@ -459,9 +463,9 @@
                 const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', user.id).single();
 
                 const fullName = profile?.full_name || metadata.full_name || 'Member';
-                const memberId = metadata.member_id || profile?.member_id || 'Pending ID';
-                const batchYear = metadata.batch_year || profile?.batch_year || 'N/A';
-                
+                const memberId = profile?.member_id || metadata.member_id || 'Pending ID';
+                const batchYear = profile?.batch_year || metadata.batch_year || 'N/A'; // Intha line-a add pannunga
+
                 // Avatar Setup
                 const defaultAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0f172a&color=fff&size=256`;
                 const avatarUrl = profile?.avatar_url ? profile.avatar_url : defaultAvatar;
