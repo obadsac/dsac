@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dharussalam OBA - Membership Status & Dues</title>
+    <title>Wahatus OBA - Membership Status & Dues</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -48,7 +48,7 @@
                 
                 <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
 
-                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Dharussalam OBA</h1>
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Wahatus Salamiyeen</h1>
             </div>
             
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
@@ -133,19 +133,19 @@
 
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 mb-8">
                         
-                        <div class="bg-white rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 relative overflow-hidden hover-lift flex flex-col justify-between">
+                        <div class="rounded-2xl md:rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 relative overflow-hidden hover-lift flex flex-col justify-between">
+                            <div class="absolute inset-0 opacity-10 bg-[url('https://lh3.googleusercontent.com/d/1cp0p8Gc6w7Tte5UFZrmuybuoc3UBlqE1')]"></div>
                             <div id="statusBgGlow" class="absolute -right-10 -bottom-10 w-40 h-40 md:w-48 md:h-48 bg-emerald-500/10 rounded-full blur-3xl transition-colors pointer-events-none"></div>
-                            
                             <div class="flex justify-between items-start mb-6 md:mb-8 relative z-10">
                                 <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-slate-50 text-slate-600 flex items-center justify-center text-2xl md:text-3xl shadow-sm border border-slate-100 shrink-0">
-                                    <i id="statusIcon" class="fas fa-user-check"></i>
+                                    <img id="cardAvatar" src="" alt="Profile" class="w-full h-full object-cover rounded-xl md:rounded-2xl">
                                 </div>
                                 <span id="statusBadge" class="bg-emerald-50 text-emerald-600 border border-emerald-200 px-3 md:px-4 py-1.5 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest shadow-sm shrink-0">ACTIVE</span>
                             </div>
                             
                             <div class="relative z-10">
                                 <p class="text-[9px] md:text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">Member Type</p>
-                                <h3 id="memTypeDisplay" class="text-xl md:text-2xl font-extrabold text-slate-800 mb-5 md:mb-6">Loading...</h3>
+                                <h3 id="memTypeDisplay" class="text-xl text-emerald-700 md:text-2xl font-extrabold text-slate-800 mb-5 md:mb-6">Loading...</h3>
                                 
                                 <div class="grid grid-cols-2 gap-3 md:gap-4 bg-slate-50 p-4 rounded-xl md:rounded-2xl border border-slate-100">
                                     <div>
@@ -395,7 +395,7 @@
                 document.getElementById('headerName').innerText = fullName;
                 document.getElementById('headerId').innerText = memberId;
                 document.getElementById('headerAvatar').src = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0f172a&color=fff&size=128`;
-
+                document.getElementById('cardAvatar').src = profile?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=0f172a&color=fff&size=128`;
                 document.getElementById('memTypeDisplay').innerText = memberType;
                 document.getElementById('validFromDisplay').innerText = joinDate.toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'});
                 
@@ -490,6 +490,57 @@
             });
         };
 
+        // ஈவென்ட் பாக்கியை (Event dues) Popup-ல் காட்டும் புதிய Function
+        window.showEventDueBreakdown = function() {
+            if (!window.currentEventDueBreakdown || window.currentEventDueBreakdown.length === 0) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'No Event Dues!',
+                    text: 'உங்களுக்கு எந்த Event பாக்கியும் இல்லை.',
+                    confirmButtonColor: '#d97706',
+                    customClass: { popup: 'rounded-3xl' }
+                });
+                return;
+            }
+
+            let tableHtml = `<div class="max-h-60 overflow-y-auto w-full text-left">
+                                <table class="w-full text-sm">
+                                    <thead class="sticky top-0 bg-white">
+                                        <tr class="text-slate-400 border-b text-[11px] uppercase tracking-wider">
+                                            <th class="pb-2 font-bold">Event Name</th>
+                                            <th class="pb-2 font-bold text-right">Due Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>`;
+            
+            let totalEventDueCheck = 0;
+            window.currentEventDueBreakdown.forEach(item => {
+                tableHtml += `<tr class="border-b border-slate-100 last:border-0 hover:bg-slate-50 transition">
+                                <td class="py-2.5 font-medium text-slate-700">${item.eventName}</td>
+                                <td class="py-2.5 text-right text-amber-500 font-bold">Rs. ${item.dueAmount}</td>
+                              </tr>`;
+                totalEventDueCheck += item.dueAmount;
+            });
+            
+            tableHtml += `  </tbody>
+                            <tfoot class="sticky bottom-0 bg-slate-50 border-t-2 border-slate-200">
+                                <tr>
+                                    <td class="py-3 text-slate-800 text-right font-bold text-sm">Total Event Due :</td>
+                                    <td class="py-3 text-right text-amber-600 font-extrabold text-base">Rs. ${totalEventDueCheck}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                      </div>`;
+
+            Swal.fire({
+                title: 'Event Dues Breakdown',
+                html: tableHtml,
+                confirmButtonColor: '#0f172a',
+                confirmButtonText: 'Close',
+                customClass: { popup: 'rounded-3xl w-full max-w-md' }
+            });
+        };
+
         async function payMembership() {
             const { value: formValues } = await Swal.fire({
                 title: 'Submit Subscription Payment',
@@ -520,13 +571,20 @@
             });
 
             if (formValues) {
-                Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                Swal.fire({ title: 'Processing...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
                 try {
+                    // 1. File Upload with Error Checking
                     const fileName = `receipt_${currentUser.id}_${Date.now()}.${formValues.receiptFile.name.split('.').pop()}`;
-                    await supabaseClient.storage.from('receipts').upload(fileName, formValues.receiptFile);
+                    const { error: uploadError } = await supabaseClient.storage.from('receipts').upload(fileName, formValues.receiptFile);
+                    
+                    if (uploadError) {
+                        throw new Error("File Upload Failed: " + uploadError.message);
+                    }
+                    
                     const { data: urlData } = supabaseClient.storage.from('receipts').getPublicUrl(fileName);
 
-                    await supabaseClient.from('transactions').insert([{
+                    // 2. Database Insert with Error Checking
+                    const { error: insertError } = await supabaseClient.from('transactions').insert([{
                         member_id: currentUser.id,
                         member_name: currentUser.name,
                         type: 'membership',
@@ -538,12 +596,102 @@
                         receipt_url: urlData.publicUrl 
                     }]);
 
-                    Swal.fire({ title: 'Submitted!', text: 'Pending verification by Treasurer.', icon: 'success', customClass: { popup: 'rounded-3xl' } });
+                    if (insertError) {
+                        throw new Error("Database Insert Failed: " + insertError.message);
+                    }
+
+                    // 1. First Treasurer details-a thedi WhatsApp URL-a uruvakkugirom
+                    let waUrl = "";
+                    try {
+                        const { data: treasurers, error: treasurerError } = await supabaseClient
+                            .from('profiles')
+                            .select('mobile')
+                            .eq('role', 'Treasurer')
+                            .limit(1);
+
+                        if (!treasurerError && treasurers && treasurers.length > 0 && treasurers[0].mobile) {
+                            let treasurerPhone = treasurers[0].mobile.replace(/\D/g, '');
+                            if (treasurerPhone.startsWith('0')) {
+                                treasurerPhone = '94' + treasurerPhone.substring(1);
+                            }
+
+                            let waMessage = `*Subscription Fee Submitted!*\n\n*Member Name:* ${currentUser.name}\n*Amount:* Rs ${formValues.amount}\n*Reference:* ${formValues.reference}\n\nPlease check the dashboard to verify.`;
+                            waUrl = `https://wa.me/${treasurerPhone}?text=${encodeURIComponent(waMessage)}`;
+                        }
+                    } catch (waError) {
+                        console.error("WhatsApp setup error:", waError);
+                    }
+
                     fetchMembershipHistory(); 
+
+                    // 2. Success Message kaatti, OK click pannum pothu WhatsApp open aaga seigirom
+                    Swal.fire({
+                        title: 'Submitted!',
+                        text: 'Pending verification by Treasurer.',
+                        icon: 'success',
+                        confirmButtonText: 'OK & Send WhatsApp', // Button peru mathi irukkom
+                        confirmButtonColor: '#25D366', // WhatsApp green color
+                        customClass: { popup: 'rounded-3xl' }
+                    }).then((result) => {
+                        // User OK button-a amukkinathum, WhatsApp link iruntha athu open aagum
+                        if (result.isConfirmed && waUrl !== "") {
+                            window.open(waUrl, '_blank');
+                        }
+                    });
+                    
                 } catch (error) {
-                    Swal.fire('Error', error.message, 'error');
+                    console.error("Payment Error:", error);
+                    // இப்போது உண்மையான error என்னவென்று Screen-ல் காட்டும்
+                    Swal.fire({
+                        title: 'Error!',
+                        text: error.message,
+                        icon: 'error',
+                        customClass: { popup: 'rounded-3xl' }
+                    });
                 }
             }
+
+            // Realtime Listener for Member
+        supabaseClient
+            .channel('member-realtime')
+            .on('postgres_changes', { 
+                event: 'UPDATE', 
+                schema: 'public', 
+                table: 'transactions',
+                filter: `member_id=eq.${currentUser.id}` // இந்த பயனரின் டேட்டா மாறினால் மட்டும்
+            }, payload => {
+                console.log('Payment status updated!', payload);
+                
+                if(payload.new.status === 'approved') {
+                    // Payment Approve ஆனவுடன் சின்ன Notification காட்டிவிட்டு Page-ஐ Reload செய்கிறோம் 
+                    // (Reload செய்வதால் Dues Calculation மீண்டும் சரியாக நடக்கும்)
+                    Swal.fire({
+                        title: 'Payment Approved!',
+                        text: 'Treasurer verified your payment. Updating your dues...',
+                        icon: 'success',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 3000
+                    }).then(() => {
+                        window.location.reload(); 
+                    });
+                } else if(payload.new.status === 'rejected') {
+                    Swal.fire({
+                        title: 'Payment Rejected!',
+                        text: 'Treasurer rejected your recent payment. Please check.',
+                        icon: 'error',
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 4000
+                    }).then(() => {
+                        window.location.reload(); 
+                    });
+                }
+            })
+            .subscribe();
+
         }
 
         function upgradeLifeMember() {
