@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dharussalam OBA - Community Hub</title>
+    <title>Wahatus Salamiyeen - Community Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -53,7 +53,7 @@
                 
                 <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
 
-                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Dharussalam OBA</h1>
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Wahatus Salamiyeen</h1>
             </div>
             
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
@@ -424,7 +424,9 @@
                             confirmButtonColor: '#059669', 
                             customClass: { popup: 'rounded-3xl' }
                         });
+                        // AUTO REFRESH BOTH SECTIONS
                         fetchMyTickets(); 
+                        fetchAllEvents();
                     }
                 } catch(err) { console.error(err); }
             }
@@ -435,7 +437,7 @@
                 title: 'Submit Vote',
                 html: `Are you sure you want to vote for: <br><b class="text-slate-800">"${option}"</b>?`,
                 icon: 'info',
-                showCancelButton: true,
+                showCanceSwallButton: true,
                 confirmButtonColor: '#2563eb',
                 confirmButtonText: 'Yes, Vote',
                 customClass: { popup: 'rounded-2xl md:rounded-3xl text-sm md:text-base' }
@@ -450,6 +452,9 @@
                             else alert("Error: " + error.message);
                         } else {
                             Swal.fire({title: 'Vote Cast!', text: 'Your response has been recorded.', icon: 'success', confirmButtonColor: '#2563eb', customClass: { popup: 'rounded-3xl' }});
+                            
+                            // AUTO REFRESH: Update UI immediately
+                            fetchAllEvents();
                         }
                     } catch(err) { alert("System Error"); }
                 }
@@ -457,30 +462,139 @@
         }
 
         async function submitNomination(eventId) {
-            const { value: formValues } = await Swal.fire({
-                title: 'Nominate Alumni',
-                html:
-                    '<input id="swal-nominee" class="swal2-input !rounded-xl !text-sm" placeholder="Full Name of Nominee" required>' +
-                    '<textarea id="swal-reason" class="swal2-textarea !rounded-xl !text-sm" placeholder="Why do they deserve this award?" required></textarea>',
-                focusConfirm: false, showCancelButton: true, confirmButtonColor: '#d97706', confirmButtonText: 'Submit Nomination',
-                customClass: { popup: 'rounded-2xl md:rounded-3xl' },
-                preConfirm: () => {
-                    return { nominee: document.getElementById('swal-nominee').value, reason: document.getElementById('swal-reason').value }
-                }
-            });
+            try {
+                // 1. Fetch profiles for datalist
+                const { data: profiles, error: profileErr } = await supabaseClient
+                    .from('profiles')
+                    .select('full_name, batch_year')
+                    .order('full_name', { ascending: true });
 
-            if (formValues && formValues.nominee) {
-                try {
-                    const { error } = await supabaseClient.from('award_nominations').insert([{
-                        event_id: eventId, user_id: currentUserId, nominee_name: formValues.nominee.trim(), reason: formValues.reason || 'No reason provided'
-                    }]);
-                    if(error) {
-                        if(error.code === '23505') Swal.fire({title: 'Already Nominated', text: 'You can only submit one nomination per award.', icon: 'warning', customClass: { popup: 'rounded-3xl' }});
-                        else alert("Error: " + error.message);
-                    } else {
-                        Swal.fire({title: 'Submitted!', text: `Nomination received.`, icon: 'success', confirmButtonColor: '#d97706', customClass: { popup: 'rounded-3xl' }});
+                let optionsHTML = '';
+                if (profiles && profiles.length > 0) {
+                    profiles.forEach(p => {
+                        const batch = p.batch_year ? ` (Batch: ${p.batch_year})` : '';
+                        optionsHTML += `<option value="${p.full_name}${batch}">`;
+                    });
+                } else {
+                    optionsHTML = `<option value="No users found">`;
+                }
+
+                // Temporary array to hold selected names
+                let selectedNominees = [];
+
+                // 2. SweetAlert with Input + Add Button + Tags Container
+                const { value: formValues } = await Swal.fire({
+                    title: 'Nominate Alumni',
+                    html: `
+                        <div class="text-left mb-2 mt-4">
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Search & Add Alumni <span class="text-rose-500">*</span></label>
+                            
+                            <!-- Search Box & Add Button -->
+                            <div class="flex gap-2 mb-3">
+                                <input list="alumniList" id="swal-nominee-input" class="swal2-input !w-full !m-0 !text-sm !rounded-xl" placeholder="Select a name..." autocomplete="off">
+                                <button type="button" id="add-nominee-btn" class="bg-emerald-500 text-white px-4 rounded-xl font-bold hover:bg-emerald-600 transition shadow-sm shrink-0">
+                                    <i class="fas fa-plus"></i> Add
+                                </button>
+                            </div>
+                            <datalist id="alumniList">
+                                ${optionsHTML}
+                            </datalist>
+                            
+                            <!-- Container for Selected Names (Tags) -->
+                            <div id="selected-tags-container" class="flex flex-wrap gap-2 mb-4 empty:hidden bg-slate-50 p-3 rounded-xl border border-slate-200 min-h-[45px]">
+                                <!-- Selected tags will appear here -->
+                            </div>
+                            
+                            <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Reason for Nomination <span class="text-rose-500">*</span></label>
+                            <textarea id="swal-reason" class="swal2-textarea !w-full !m-0 !text-sm !rounded-xl" placeholder="Why do they deserve this award?" required></textarea>
+                        </div>
+                    `,
+                    focusConfirm: false, 
+                    showCancelButton: true, 
+                    confirmButtonColor: '#d97706', 
+                    confirmButtonText: '<i class="fas fa-medal mr-1"></i> Submit Nomination',
+                    customClass: { popup: 'rounded-2xl md:rounded-3xl' },
+                    
+                    // didOpen handles the dynamic logic inside the popup
+                    didOpen: () => {
+                        const input = document.getElementById('swal-nominee-input');
+                        const addBtn = document.getElementById('add-nominee-btn');
+                        const tagsContainer = document.getElementById('selected-tags-container');
+
+                        // Function to redraw tags
+                        const renderTags = () => {
+                            if(selectedNominees.length === 0) {
+                                tagsContainer.innerHTML = '<span class="text-xs text-slate-400 font-medium italic">No nominees added yet.</span>';
+                            } else {
+                                tagsContainer.innerHTML = selectedNominees.map((name, index) => `
+                                    <span class="bg-indigo-100 text-indigo-700 text-[11px] font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm border border-indigo-200">
+                                        ${name} 
+                                        <i class="fas fa-times cursor-pointer hover:text-rose-500 ml-1 transition-colors remove-btn" data-index="${index}"></i>
+                                    </span>
+                                `).join('');
+                            }
+                        };
+                        
+                        renderTags(); // Initial render
+
+                        // Add Button Click Event
+                        addBtn.addEventListener('click', () => {
+                            const val = input.value.trim();
+                            if (val && !selectedNominees.includes(val)) {
+                                selectedNominees.push(val); // Array-la add pandrom
+                                input.value = ''; // Input box-a clear pandrom
+                                renderTags(); // UI-a update pandrom
+                            }
+                        });
+
+                        // Remove Button Click Event (Event Delegation)
+                        tagsContainer.addEventListener('click', (e) => {
+                            if (e.target.closest('.remove-btn')) {
+                                const index = e.target.closest('.remove-btn').getAttribute('data-index');
+                                selectedNominees.splice(index, 1); // Array-la irunthu remove pandrom
+                                renderTags();
+                            }
+                        });
+                    },
+                    preConfirm: () => {
+                        const reasonVal = document.getElementById('swal-reason').value;
+
+                        // Validation
+                        if (selectedNominees.length === 0 || !reasonVal.trim()) {
+                            Swal.showValidationMessage('Please add at least one nominee and provide a reason');
+                            return false;
+                        }
+                        
+                        // Array-va comma potu string-a maathiduvom (e.g. "Name 1, Name 2")
+                        return { 
+                            nomineeNames: selectedNominees.join(' | '), 
+                            reason: reasonVal 
+                        }
                     }
-                } catch(err) { alert("System Error"); }
+                });
+
+                if (formValues) {
+                    const { error } = await supabaseClient.from('award_nominations').insert([{
+                        event_id: eventId, 
+                        user_id: currentUserId, 
+                        nominee_name: formValues.nomineeNames, // Multiple names grouped together
+                        reason: formValues.reason.trim()
+                    }]);
+
+                    if(error) {
+                        if(error.code === '23505') {
+                            Swal.fire({title: 'Already Nominated', text: 'You have already submitted a nomination for this event.', icon: 'warning', customClass: { popup: 'rounded-3xl' }});
+                        } else {
+                            alert("Error: " + error.message);
+                        }
+                    } else {
+                        Swal.fire({title: 'Submitted!', text: 'Your nominations have been received.', icon: 'success', confirmButtonColor: '#d97706', customClass: { popup: 'rounded-3xl' }});
+                        fetchAllEvents(); // Auto refresh UI
+                    }
+                }
+            } catch(err) { 
+                console.error("Nomination Error: ", err);
+                alert("System Error occurred while processing your request."); 
             }
         }
 
