@@ -58,7 +58,6 @@
                     <a href="index.html" class="text-emerald-400 font-bold border-b-2 border-emerald-400 pb-1 transition">Home</a>
                     <a href="our-school.html" class="text-slate-300 hover:text-white font-semibold transition">Our Madrasa</a>
                     <a href="leadership.html" class="text-slate-300 hover:text-white font-semibold transition">Leadership</a>
-                    <a href="#news" class="text-slate-300 hover:text-white font-semibold transition">News</a>
                     <a href="#events" class="text-slate-300 hover:text-white font-semibold transition">Events</a>
                     <button onclick="toggleLoginModal()" class="bg-white text-slate-900 px-6 py-2.5 rounded-xl font-bold shadow-lg hover:shadow-white/20 hover:-translate-y-0.5 transition-all duration-300 border border-slate-200">
                         Access Portal
@@ -78,7 +77,6 @@
                 <a href="index.html" class="text-emerald-400 font-bold bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">Home</a>
                 <a href="our-school.html" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">Our Madrasa</a>
                 <a href="leadership.html" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">Leadership</a>
-                <a href="#news" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">News</a>
                 <a href="#events" class="text-slate-300 font-semibold p-3 hover:bg-slate-800/50 rounded-xl">Events</a>
                 <button onclick="toggleLoginModal()" class="bg-emerald-500 text-white px-6 py-3.5 rounded-xl font-bold w-full shadow-lg">Member Login</button>
             </div>
@@ -161,30 +159,12 @@
     <!-- FIXED: Added overflow-hidden to contain the AOS fade-left animations -->
     <!-- Public News & Upcoming Events Section -->
     <section class="py-16 md:py-24 bg-white border-t border-slate-200 overflow-hidden w-full">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16">
-            
-            <!-- News Column -->
-            <div id="news" data-aos="fade-right">
-                <div class="flex items-center mb-6 md:mb-8">
-                    <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600 mr-4"><i class="fas fa-newspaper text-lg"></i></div>
-                    <h3 class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Community Updates</h3>
-                </div>
-                <div class="space-y-4">
-                    <div class="bg-slate-50 p-5 md:p-6 rounded-2xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-base md:text-lg text-slate-800 group-hover:text-indigo-600 transition-colors pr-2">New IT Lab Inauguration</h4>
-                            <span class="shrink-0 text-[10px] font-bold text-indigo-700 bg-indigo-100 border border-indigo-200 px-2.5 py-0.5 rounded-full uppercase tracking-wider">News</span>
-                        </div>
-                        <p class="text-slate-400 text-xs mb-3 font-medium"><i class="far fa-calendar-alt mr-1"></i> July 20, 2026</p>
-                        <p class="text-slate-600 text-sm leading-relaxed">Alhamdulillah, the OBA funded IT lab was successfully inaugurated by our Principal. Thanks to all donors for their continuous support.</p>
-                    </div>
-                </div>
-            </div>
+        <div class="max-w-7xl mx-auto px-4 gap-12 md:gap-16">
 
             <!-- Events Column -->
             <div id="events" data-aos="fade-left">
                 <div class="flex items-center mb-6 md:mb-8">
-                    <div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 mr-4"><i class="fas fa-calendar-star text-lg"></i></div>
+                    <div class="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600 mr-4"><i class="fas fa-calendar text-lg"></i></div>
                     <h3 class="text-xl md:text-2xl font-bold text-slate-900 tracking-tight">Public Events</h3>
                 </div>
                 <div class="space-y-4" id="publicEventsContainer">
