@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dharussalam OBA - Member Dashboard</title>
+    <title>Wahatus Salamiyeen - Member Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -51,7 +51,7 @@
                 <!-- Mobile Close Button -->
                 <button onclick="toggleSidebar()" class="md:hidden absolute top-3 right-3 text-slate-400 hover:text-white transition-colors focus:outline-none"><i class="fas fa-times text-lg"></i></button>
 
-                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Dharussalam OBA</h1>
+                <h1 class="text-xl font-extrabold text-white mt-3 flex items-center tracking-tight"><i class="fas fa-graduation-cap text-emerald-500 mr-2 drop-shadow-md"></i> Wahatus Salamiyeen</h1>
             </div>
             
             <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
@@ -92,12 +92,6 @@
                 </div>
                 
                 <div class="flex items-center space-x-4">
-                    <div class="relative cursor-pointer text-slate-400 hover:text-emerald-500 transition mr-2 md:mr-4">
-                        <span class="absolute top-0 right-0 -mt-1 -mr-1 flex h-2.5 w-2.5 md:h-3 md:w-3">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 md:h-3 md:w-3 bg-rose-500 border-2 border-white"></span>
-                        </span>
-                    </div>
 
                     <div class="flex items-center space-x-3 bg-white px-2 py-1.5 rounded-full shadow-sm border border-slate-200 cursor-pointer hover:bg-slate-50 transition shrink-0">
                         <img id="headerAvatar" src="" alt="Profile" class="h-8 w-8 md:h-9 md:w-9 rounded-full border border-slate-200 bg-slate-100 object-cover">
@@ -118,25 +112,22 @@
                     
                     <div class="mb-6 md:mb-8">
                         <h2 id="welcomeText" class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">Welcome!</h2>
-                        <p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Welcome back to your OBA Member Portal.</p>
+                        <p class="text-xs md:text-sm text-slate-500 mt-1 font-medium">Welcome back to your Salamiyeen Member Portal.</p>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 mb-8">
                         
                         <!-- Digital Membership Card (Mobile Optimized) -->
                         <div class="lg:col-span-1 bg-slate-900 rounded-2xl md:rounded-3xl shadow-xl overflow-hidden relative text-white border border-slate-800 hover-lift group">
-                            <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                            <div class="absolute inset-0 opacity-10 bg-[url('https://lh3.googleusercontent.com/d/1cp0p8Gc6w7Tte5UFZrmuybuoc3UBlqE1')]"></div>
                             <div class="absolute -right-10 -bottom-10 w-40 h-40 md:w-48 md:h-48 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 transition-all pointer-events-none"></div>
                             
                             <div class="p-6 md:p-8 relative z-10 h-full flex flex-col justify-between min-h-[220px] md:min-h-0">
                                 <div>
                                     <div class="flex justify-between items-start mb-5 md:mb-6">
                                         <div class="flex items-center space-x-2.5 md:space-x-3">
-                                            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 p-1.5 md:p-2 rounded-lg shadow-sm">
-                                                <i class="fas fa-graduation-cap text-white text-base md:text-xl"></i>
-                                            </div>
                                             <div>
-                                                <h3 class="font-extrabold text-xs md:text-sm tracking-widest uppercase text-white leading-none">Dharussalam OBA</h3>
+                                                <h3 class="font-extrabold text-xs md:text-sm tracking-widest text-white leading-none">Wahatus Salamiyeen</h3>
                                                 <p class="text-[8px] md:text-[9px] text-slate-400 font-bold tracking-widest uppercase mt-0.5 md:mt-1">Digital ID</p>
                                             </div>
                                         </div>
@@ -193,6 +184,8 @@
                             </div>
 
                             <!-- Alert Box -->
+                            <div id="profileAlertBox" class="sm:col-span-2 bg-amber-50 border border-amber-200 rounded-2xl md:rounded-3xl p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between shadow-sm gap-4 sm:gap-0">
+                                <div class="flex items-start sm:items-center w-full sm:w-auto">
                             <div class="sm:col-span-2 bg-amber-50 border border-amber-200 rounded-2xl md:rounded-3xl p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between shadow-sm gap-4 sm:gap-0">
                                 <div class="flex items-start sm:items-center w-full sm:w-auto">
                                     <div class="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg md:text-xl mr-3 md:mr-5 shadow-inner shrink-0 mt-0.5 sm:mt-0">
@@ -250,9 +243,17 @@
                 const { data: profile } = await supabaseClient.from('profiles').select('*').eq('id', currentUserId).single();
 
                 // UI Variables
-                const memberId = metadata.member_id || profile?.member_id || 'Pending ID';
-                const batchYear = metadata.batch_year || profile?.batch_year || 'N/A';
+                const memberId = profile?.member_id || metadata.member_id || 'Pending ID';
+                const batchYear = profile?.batch_year || metadata.batch_year || 'N/A';
                 const status = profile?.status || 'PENDING';
+
+                const profileAlertBox = document.getElementById('profileAlertBox');
+                if (profileAlertBox) {
+                    // Mobile number matrum address update aagiruntha allathu Member ID assign aagiruntha box-a hide pannu
+                    if ((profile?.mobile && profile?.address) || (memberId !== 'Pending ID' && memberId !== 'N/A')) {
+                        profileAlertBox.style.display = 'none';
+                    }
+                }
                 
                 // Update Headers & Greetings
                 document.getElementById('headerUserName').innerText = fullName;
@@ -294,7 +295,7 @@
                 }
                 
                 const donTotalEl = document.getElementById('statDonationTotal');
-                if(donTotalEl) donTotalEl.innerHTML = `Rs ${totalAmount.toLocaleString('en-IN')} <span class="text-xs md:text-sm text-slate-400 font-medium">Lifetime</span>`;
+                if(donTotalEl) donTotalEl.innerHTML = `Rs ${totalAmount.toLocaleString('en-IN')} <p><span class="text-xs md:text-sm text-slate-400 font-medium">Lifetime</span>`;
 
                 // 5. Show Content
                 document.getElementById('page-loader').style.display = 'none';
